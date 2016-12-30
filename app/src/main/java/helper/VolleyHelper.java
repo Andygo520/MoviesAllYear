@@ -31,7 +31,7 @@ public class VolleyHelper {
 
                  }
              });
-             networkImageView.setDefaultImageResId(R.mipmap.movie_icon);
+//             networkImageView.setDefaultImageResId(R.mipmap.movie_icon);
              networkImageView.setErrorImageResId(R.mipmap.ic_launcher);
              networkImageView.setImageUrl(url,imageLoader);
 

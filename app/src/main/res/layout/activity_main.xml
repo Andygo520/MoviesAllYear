@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <!--下面是一个搜索框-->
     <LinearLayout
@@ -62,13 +63,20 @@
         android:layout_weight="1"
         android:layout_margin="5dp" />
 
-    <ImageButton
-        android:id="@+id/fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_critics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+    <com.nightonke.boommenu.BoomMenuButton
+        android:id="@+id/bmb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_margin="20dp"
-        android:background="@drawable/fab"
-        android:src="@mipmap/fab_ic_add" />
+        android:layout_margin="10dp"
+        app:bmb_buttonEnum="textInsideCircle"
+        app:bmb_piecePlaceEnum="piecePlace_dot_2_1"
+        app:bmb_buttonPlaceEnum="buttonPlace_sc_2_1"
+        />
 
 </LinearLayout>

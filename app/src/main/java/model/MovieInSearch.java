@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Administrator on 2016/12/27.
  */
 
-public class InforInSearch {
+public class MovieInSearch {
     /**
      * count : 20
      * start : 0
