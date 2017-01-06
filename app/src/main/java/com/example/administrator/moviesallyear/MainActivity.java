@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.greendao.gen.MovieCriticsDao;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
@@ -40,18 +41,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import helper.ACache;
 import helper.OnRecyclerItemClickListener;
 import helper.UrlHelper;
 import model.CriticsAdapter;
 import model.MovieInSearch;
-import model.MyAdapter;
+import model.MovieSearchedAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private String query;//用户搜索的内容
     private String url;//用户搜索的信息对应的URL
     private List<String> titles, casts, imageUrls;// 用来存放电影标题、演员、电影图片的列表
-    private List<String> nameList, contentList;// 用来存放电影标题、演员、电影图片的列表
+    private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
 
     @BindView(R.id.llInputQuery)
     LinearLayout llInputQuery;
@@ -72,44 +72,45 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+//        获取MovieCriticsDao对象
+        criticsDao = MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
 
-
-        ArrayList<String> names=new ArrayList<>();
-        names.add("搜电影");
-        names.add("写影评");
-        ArrayList<Integer> images=new ArrayList<>();
+        ArrayList<String> items = new ArrayList<>();
+        items.add("搜电影");
+        items.add("写影评");
+        ArrayList<Integer> images = new ArrayList<>();
         images.add(R.drawable.search_movie);
         images.add(R.drawable.edit_critics);
 
         titles = new ArrayList<>();
         casts = new ArrayList<>();
         imageUrls = new ArrayList<>();
-        nameList=new ArrayList<>();
-        contentList=new ArrayList<>();
 
+//        配置BoomMenuButton
         for (int i = 0; i < bmb.getButtonPlaceEnum().buttonNumber(); i++) {
-            TextInsideCircleButton.Builder builder =  new TextInsideCircleButton.Builder()
+            TextInsideCircleButton.Builder builder = new TextInsideCircleButton.Builder()
                     .listener(new OnBMClickListener() {
                         @Override
                         public void onBoomButtonClick(int index) {
                             // When the boom-button corresponding this builder is clicked.
-                            switch (index){
+                            switch (index) {
                                 case 0:
-                                llInputQuery.setVisibility(View.VISIBLE);
+                                    llInputQuery.setVisibility(View.VISIBLE);
                                     break;
                                 case 1:
-                                    Intent intent=new Intent(MainActivity.this,CriticsActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, CriticsActivity.class);
                                     startActivity(intent);
                                     break;
                             }
                         }
                     })
-                    .normalText(names.get(i))
+                    .normalText(items.get(i))
                     .highlightedColor(R.color.colorBase)
                     .textPadding(new Rect(10, 10, 10, 10))
                     .normalImageRes(images.get(i));
             bmb.addBuilder(builder);
         }
+
 //  当EditText设置了imeOptions属性后，利用该方法给回车键设置点击事件
         etSearchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -164,15 +165,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        String name= ACache.get(MainActivity.this).getAsString("name");
-        String content= ACache.get(MainActivity.this).getAsString("content");
+//   从数据库查询数据(根据创建时间升序排列)
+        List movieCriticsList = criticsDao.queryBuilder()
+                .orderDesc(MovieCriticsDao.Properties.CreateTime)
+                .list();
+//        List<MovieCritics> movieCriticsList = criticsDao.loadAll();
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        recyclerView.setAdapter(new CriticsAdapter(movieCriticsList, MainActivity.this));
+        recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
+            @Override
+            public void onLongClick(RecyclerView.ViewHolder vh) {
+            }
 
-        if (name!=null&&content!=null){
-            nameList.add(name);
-            contentList.add(content);
-            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            recyclerView.setAdapter(new CriticsAdapter(nameList,contentList,MainActivity.this));
-        }
+            @Override
+            public void onItemClick(RecyclerView.ViewHolder vh) {
+                Intent intent = new Intent(MainActivity.this, CriticsActivity.class);
+                long id= criticsDao.queryBuilder()
+                        .orderDesc(MovieCriticsDao.Properties.CreateTime)
+                        .list().get(vh.getLayoutPosition()-1).getId();
+                intent.putExtra("Flag",999);
+                intent.putExtra("id",id);
+                Log.d("idid",id+"");
+                startActivity(intent);
+            }
+        });
+
     }
 
     public void getMovieInfor(final String url) {
@@ -210,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                             imageUrls.add(item.getImages().getLarge());
                         }
                         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                        recyclerView.setAdapter(new MyAdapter(titles, casts, imageUrls, MainActivity.this));
+                        recyclerView.setAdapter(new MovieSearchedAdapter(titles, casts, imageUrls, MainActivity.this));
                         recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
                             @Override
                             public void onLongClick(RecyclerView.ViewHolder vh) {
@@ -220,7 +237,6 @@ public class MainActivity extends AppCompatActivity {
                             public void onItemClick(RecyclerView.ViewHolder vh) {
                                 Intent intent = new Intent(MainActivity.this, ScrollingActivity.class);
                                 intent.putExtra("Id", subjects.get(vh.getLayoutPosition() - 1).getId());
-                                Log.d("IdIdId", vh.getLayoutPosition() + "");
                                 startActivity(intent);
                             }
                         });

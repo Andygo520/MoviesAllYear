@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.example.administrator.moviesallyear.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,12 +18,7 @@ import java.util.List;
 //为RecyclerView的每个子item设置setOnClickListener，然后在onClick中再调用一次对外封装的接口，将这个事件传递给外面的调用者。而“为RecyclerView的每个子item设置setOnClickListener”在Adapter中设置。
 public class CriticsAdapter extends RecyclerView.Adapter<CriticsAdapter.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
     private Context context;
-    private List<String> nameList;
-    private List<String> contentList;
-
-
-    //    设置每个item view的高度为随机值，实现瀑布流效果
-    private List<Integer> height;
+    private List<MovieCritics> movieList;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
     public static interface OnRecyclerViewItemClickListener {
@@ -33,16 +27,9 @@ public class CriticsAdapter extends RecyclerView.Adapter<CriticsAdapter.ViewHold
 
     }
 
-    public CriticsAdapter(List<String> nameList, List<String> contentList,Context context) {
-        this.nameList = nameList;
-        this.contentList = contentList;
+    public CriticsAdapter(List<MovieCritics> movieList,Context context) {
+        this.movieList = movieList;
         this.context=context;
-
-        //随机获取一个height值
-        height=new ArrayList<>();
-        for (int j=0;j<nameList.size();j++){
-            height.add( (int) (100 + Math.random() * 300));
-        }
     }
     //  处理单击事件
     @Override
@@ -63,14 +50,7 @@ public class CriticsAdapter extends RecyclerView.Adapter<CriticsAdapter.ViewHold
             return false;
     }
 
-    //移除数据
-    public void removeData(int position) {
-        nameList.remove(position);
-        contentList.remove(position);
-        notifyItemRemoved(position);
-//     表示从当前移除的位置后面的item的position要相应的更新
-        notifyItemRangeChanged(position,nameList.size()-position);
-    }
+
 
     public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
         this.mOnItemClickListener = listener;
@@ -87,22 +67,24 @@ public class CriticsAdapter extends RecyclerView.Adapter<CriticsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.tvName.setText(nameList.get(position));
-        holder.tvContent.setText(contentList.get(position));
+        holder.tvName.setText(movieList.get(position).getName());
+        holder.tvContent.setText(movieList.get(position).getCritics());
+        holder.tvTime.setText(movieList.get(position).getCreateTime());
     }
 
     @Override
     public int getItemCount() {
-        return nameList.size();
+        return movieList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvContent;
+        TextView tvName, tvContent,tvTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_name);
             tvContent = (TextView) itemView.findViewById(R.id.tv_content);
+            tvTime = (TextView) itemView.findViewById(R.id.tv_createTime);
         }
     }
 }

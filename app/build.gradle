@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 23
@@ -20,6 +21,19 @@ android {
     }
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+    }
+}
+greendao {
+    schemaVersion 1
+    daoPackage 'com.greendao.gen'
+    targetGenDir 'src/main/java'
+}
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -36,4 +50,5 @@ dependencies {
     compile 'com.jcodecraeer:xrecyclerview:1.2.7'
     compile 'com.android.support:design:23.4.0'
     compile 'com.nightonke:boommenu:2.0.6'
+    compile 'org.greenrobot:greendao:3.2.0'
 }
