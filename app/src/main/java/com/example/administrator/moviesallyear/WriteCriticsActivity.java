@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.AppExit;
+import com.MyApplication;
 import com.greendao.gen.MovieCriticsDao;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +38,7 @@ public class WriteCriticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_critics);
         ButterKnife.bind(this);
+        AppExit.getInstance().addActivity(this);
 
         context = WriteCriticsActivity.this;
 //       获得MovieCriticsDao对象

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.AppExit;
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -51,6 +52,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        AppExit.getInstance().addActivity(this);
 
         context = MovieDetailActivity.this;
 //        获取列表界面传递过来的电影id以及电影名

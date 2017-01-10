@@ -1,4 +1,4 @@
-package com.example.administrator.moviesallyear;
+package com;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;

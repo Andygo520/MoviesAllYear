@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.AppExit;
+import com.MyApplication;
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private String url;//用户搜索的信息对应的URL
     private List<String> titles, casts, imageUrls;// 用来存放电影标题、演员、电影图片的列表
     private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
+    private long time = 0;
+
     @BindView(R.id.left_img)
     ImageView leftImg;
     @BindView(R.id.title)
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        AppExit.getInstance().addActivity(this);
 
         title.setText("影评列表");
         leftImg.setVisibility(View.GONE);
@@ -200,11 +205,34 @@ public class MainActivity extends AppCompatActivity {
                 long id = criticsDao.queryBuilder()
                         .orderDesc(MovieCriticsDao.Properties.CreateTime)
                         .list().get(vh.getLayoutPosition()-1).getId();
-                Log.d("CriticsPosition",vh.getLayoutPosition()-1+"");
                 intent.putExtra("id", id);
                 startActivity(intent);
+                finish();
             }
         });
+
+    }
+
+    /**
+     * 双击返回桌面
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - time > 2000)) {
+                Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
+                time = System.currentTimeMillis();
+            } else {
+//                Intent intent = new Intent(Intent.ACTION_MAIN);
+//                intent.addCategory(Intent.CATEGORY_HOME);
+//                startActivity(intent);
+//退出
+                AppExit.getInstance().exit();
+            }
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
 
     }
 
@@ -294,6 +322,23 @@ public class MainActivity extends AppCompatActivity {
                             .list();
                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                     recyclerView.setAdapter(new CriticsAdapter(list, MainActivity.this));
+                    recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
+                        @Override
+                        public void onLongClick(RecyclerView.ViewHolder vh) {
+                        }
+
+                        @Override
+                        public void onItemClick(RecyclerView.ViewHolder vh) {
+                            Intent intent = new Intent(MainActivity.this, CriticsDetailActivity.class);
+//                获得点击条目的主键id
+                            long id = criticsDao.queryBuilder()
+                                    .orderDesc(MovieCriticsDao.Properties.CreateTime)
+                                    .list().get(vh.getLayoutPosition()-1).getId();
+                            intent.putExtra("id", id);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
 
                 } else {
                     try {
