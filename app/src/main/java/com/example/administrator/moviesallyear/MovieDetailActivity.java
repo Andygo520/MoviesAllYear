@@ -1,6 +1,7 @@
 package com.example.administrator.moviesallyear;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -8,15 +9,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -24,10 +24,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import helper.UrlHelper;
+import helper.VolleyHelper;
 import model.MovieItem;
 
-public class ScrollingActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity {
 
+    @BindView(R.id.imageview)
+    NetworkImageView imageview;
+    private Context context;
+    private String title, itemId,imageUrl;// 电影名,电影id,图片
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_layout)
@@ -38,38 +43,41 @@ public class ScrollingActivity extends AppCompatActivity {
     FloatingActionButton fab;
     @BindView(R.id.webView)
     WebView webView;
-    @BindView(R.id.et_critic)
-    EditText etCritic;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scrolling);
+        setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-//        获取列表界面传递过来的条目id
-        String itemId = getIntent().getStringExtra("Id");
+        context = MovieDetailActivity.this;
+//        获取列表界面传递过来的电影id以及电影名
+        itemId = getIntent().getStringExtra("Id");
+        title = getIntent().getStringExtra("Title");
+        imageUrl = getIntent().getStringExtra("ImageUrl");
+        toolbarLayout.setTitle(title);
+        VolleyHelper.showImageByUrl(context,imageUrl,imageview);
+
         Log.d("itemId", itemId);
-
         String url = UrlHelper.item_url.replace("{id}", itemId);
-
         getMovieItemInfo(url);
     }
 
     @OnClick(R.id.fab)
     public void onClick() {
-       webView.setVisibility(View.GONE);
-        etCritic.setVisibility(View.VISIBLE);
-        etCritic.setHint("赶快写点影评吧···");
-        etCritic.setHintTextColor(Color.parseColor(String.valueOf(R.color.color_light_grey)));
+        Intent intent = new Intent(context, WriteCriticsActivity.class);
+        intent.putExtra("Title", title);
+        intent.putExtra("Flag", -999); //跳转标志
+        startActivity(intent);
     }
 
     public void getMovieItemInfo(final String url) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                RequestQueue queue = Volley.newRequestQueue(ScrollingActivity.this);
+                RequestQueue queue = Volley.newRequestQueue(MovieDetailActivity.this);
                 StringRequest request = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
@@ -77,7 +85,7 @@ public class ScrollingActivity extends AppCompatActivity {
 
                         String mobile_url = item.getMobile_url();
                         webView.loadUrl(mobile_url);
-                        webView.setWebViewClient(new WebViewClient(){
+                        webView.setWebViewClient(new WebViewClient() {
                             @Override
                             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                                 view.loadUrl(url);

@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -44,15 +45,22 @@ import butterknife.OnClick;
 import helper.OnRecyclerItemClickListener;
 import helper.UrlHelper;
 import model.CriticsAdapter;
+import model.MovieCritics;
 import model.MovieInSearch;
 import model.MovieSearchedAdapter;
 
 public class MainActivity extends AppCompatActivity {
+
     private String query;//用户搜索的内容
     private String url;//用户搜索的信息对应的URL
     private List<String> titles, casts, imageUrls;// 用来存放电影标题、演员、电影图片的列表
     private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
-
+    @BindView(R.id.left_img)
+    ImageView leftImg;
+    @BindView(R.id.title)
+    TextView title;
+    @BindView(R.id.iv_search)
+    ImageView ivSearch;
     @BindView(R.id.llInputQuery)
     LinearLayout llInputQuery;
     @BindView(R.id.recyclerView)
@@ -72,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        title.setText("影评列表");
+        leftImg.setVisibility(View.GONE);
+        ivSearch.setVisibility(View.VISIBLE);
+
+//        默认设置XRecyclerView不能下拉刷新以及上拉加载更多
+        recyclerView.setPullRefreshEnabled(false);
+        recyclerView.setLoadingMoreEnabled(false);
 //        获取MovieCriticsDao对象
         criticsDao = MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
 
@@ -96,9 +111,10 @@ public class MainActivity extends AppCompatActivity {
                             switch (index) {
                                 case 0:
                                     llInputQuery.setVisibility(View.VISIBLE);
+                                    etSearchInput.setHint("搜电影");
                                     break;
                                 case 1:
-                                    Intent intent = new Intent(MainActivity.this, CriticsActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, WriteCriticsActivity.class);
                                     startActivity(intent);
                                     break;
                             }
@@ -179,13 +195,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(RecyclerView.ViewHolder vh) {
-                Intent intent = new Intent(MainActivity.this, CriticsActivity.class);
-                long id= criticsDao.queryBuilder()
+                Intent intent = new Intent(MainActivity.this, CriticsDetailActivity.class);
+//                获得点击条目的主键id
+                long id = criticsDao.queryBuilder()
                         .orderDesc(MovieCriticsDao.Properties.CreateTime)
                         .list().get(vh.getLayoutPosition()-1).getId();
-                intent.putExtra("Flag",999);
-                intent.putExtra("id",id);
-                Log.d("idid",id+"");
+                Log.d("CriticsPosition",vh.getLayoutPosition()-1+"");
+                intent.putExtra("id", id);
                 startActivity(intent);
             }
         });
@@ -235,8 +251,11 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onItemClick(RecyclerView.ViewHolder vh) {
-                                Intent intent = new Intent(MainActivity.this, ScrollingActivity.class);
+                                Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
                                 intent.putExtra("Id", subjects.get(vh.getLayoutPosition() - 1).getId());
+                                Log.d("MoviePosition",vh.getLayoutPosition()-1+"");
+                                intent.putExtra("Title", subjects.get(vh.getLayoutPosition() - 1).getTitle());
+                                intent.putExtra("ImageUrl", subjects.get(vh.getLayoutPosition() - 1).getImages().getLarge());
                                 startActivity(intent);
                             }
                         });
@@ -254,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.ivDelete, R.id.llSearch})
+    @OnClick({R.id.ivDelete, R.id.llSearch, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ivDelete:
@@ -268,15 +287,29 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "请输入内容后再搜索", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                try {
-                    query = URLEncoder.encode(query, "utf-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+//                搜索分两种情况，搜影评跟搜在线电影
+                if (etSearchInput.getHint().toString().equalsIgnoreCase("输关键字查找影评")) {
+                    List<MovieCritics> list = criticsDao.queryBuilder().whereOr(MovieCriticsDao.Properties.Name.like("%" + query + "%")
+                            , MovieCriticsDao.Properties.Critics.like("%" + query + "%"))
+                            .list();
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                    recyclerView.setAdapter(new CriticsAdapter(list, MainActivity.this));
+
+                } else {
+                    try {
+                        query = URLEncoder.encode(query, "utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    url = UrlHelper.query_url.replace("{query}", query);
+                    getMovieInfor(url);
                 }
-                url = UrlHelper.query_url.replace("{query}", query);
-                getMovieInfor(url);
+                break;
+
+            case R.id.iv_search:
+                llInputQuery.setVisibility(View.VISIBLE);
+                etSearchInput.setHint("输关键字查找影评");
                 break;
         }
     }
-
 }

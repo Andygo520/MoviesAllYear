@@ -18,10 +18,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import model.MovieCritics;
 
-public class CriticsActivity extends AppCompatActivity {
+public class WriteCriticsActivity extends AppCompatActivity {
     private Context context;
     private MovieCriticsDao criticsDao;
-    private int flag;// 影评页跳转过来就可以修改数据，区别于从bmb按钮跳转而来
+    private int flag;// 标志位，用来判断是修改影评还是新增
     private long id; // 修改数据的时候主键id不变
 
     @BindView(R.id.et_name)
@@ -37,15 +37,21 @@ public class CriticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_critics);
         ButterKnife.bind(this);
 
-        context = CriticsActivity.this;
+        context = WriteCriticsActivity.this;
 //       获得MovieCriticsDao对象
         criticsDao = MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
         flag = getIntent().getIntExtra("Flag", 0);
+//        修改影评
         if (flag == 999) {
             id = getIntent().getLongExtra("id", (long) -1);
             MovieCritics critics = criticsDao.load(id);
             etName.setText(critics.getName());
             etContent.setText(critics.getCritics());
+        }
+//        从MovieDetailActivity跳转而来
+        else if (flag == -999){
+            String title=getIntent().getStringExtra("Title");
+            etName.setText(title);
         }
 
     }
@@ -68,7 +74,7 @@ public class CriticsActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = sdf.format(new Date(createTime));
 
-//       flag为999代表更新数据，否则就为插入新数据
+//       flag为999代表更新数据(id不变)，否则就为插入新数据
         if (flag == 999)
             criticsDao.update(new MovieCritics(id, name, content, time));
         else

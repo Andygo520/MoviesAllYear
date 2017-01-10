@@ -11,18 +11,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"></activity>
         <activity
-            android:name=".ScrollingActivity"
+            android:name=".MovieDetailActivity"
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CriticsActivity"></activity>
+        <activity android:name=".WriteCriticsActivity" />
+        <activity android:name=".CriticsDetailActivity" />
+
     </application>
 
 </manifest>
