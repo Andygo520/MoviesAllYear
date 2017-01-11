@@ -322,23 +322,23 @@ public class MainActivity extends AppCompatActivity {
                             .list();
                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                     recyclerView.setAdapter(new CriticsAdapter(list, MainActivity.this));
-                    recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
-                        @Override
-                        public void onLongClick(RecyclerView.ViewHolder vh) {
-                        }
-
-                        @Override
-                        public void onItemClick(RecyclerView.ViewHolder vh) {
-                            Intent intent = new Intent(MainActivity.this, CriticsDetailActivity.class);
-//                获得点击条目的主键id
-                            long id = criticsDao.queryBuilder()
-                                    .orderDesc(MovieCriticsDao.Properties.CreateTime)
-                                    .list().get(vh.getLayoutPosition()-1).getId();
-                            intent.putExtra("id", id);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
+//                    recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
+//                        @Override
+//                        public void onLongClick(RecyclerView.ViewHolder vh) {
+//                        }
+//
+//                        @Override
+//                        public void onItemClick(RecyclerView.ViewHolder vh) {
+//                            Intent intent = new Intent(MainActivity.this, CriticsDetailActivity.class);
+////                获得点击条目的主键id
+//                            long id = criticsDao.queryBuilder()
+//                                    .orderDesc(MovieCriticsDao.Properties.CreateTime)
+//                                    .list().get(vh.getLayoutPosition()-1).getId();
+//                            intent.putExtra("id", id);
+//                            startActivity(intent);
+//                            finish();
+//                        }
+//                    });
 
                 } else {
                     try {
