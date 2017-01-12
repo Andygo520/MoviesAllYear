@@ -25,7 +25,7 @@ import butterknife.OnClick;
 import model.MovieCritics;
 
 public class CriticsDetailActivity extends AppCompatActivity {
-    private long id;//影评的主键id
+    private Long id;// 条目的主键
     private MovieCriticsDao criticsDao;// 数据库对象
 
     @BindView(R.id.left_arrow)
@@ -61,7 +61,7 @@ public class CriticsDetailActivity extends AppCompatActivity {
         title.setText("详情");
 //       初始化数据库对象,并通过主键得到具体影评对象
         criticsDao = MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
-        id = getIntent().getLongExtra("id", (long) -1);
+        id = getIntent().getLongExtra("id",  -1);
         MovieCritics critics = criticsDao.load(id);
         if (critics != null) {
             tvName.setText(critics.getName());
