@@ -1,4 +1,4 @@
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.administrator.moviesallyear.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

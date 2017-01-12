@@ -1,4 +1,4 @@
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,11 @@ import android.widget.Toast;
 
 import com.AppExit;
 import com.MyApplication;
+import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
+import com.iarcuschin.simpleratingbar.SimpleRatingBar;
+
+import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +25,6 @@ import butterknife.OnClick;
 import model.MovieCritics;
 
 public class CriticsDetailActivity extends AppCompatActivity {
-
     private long id;//影评的主键id
     private MovieCriticsDao criticsDao;// 数据库对象
 
@@ -39,6 +42,10 @@ public class CriticsDetailActivity extends AppCompatActivity {
     TextView tvContent;
     @BindView(R.id.iv_share)
     ImageView ivShare;
+    @BindView(R.id.tv_Date)
+    TextView tvDate;
+    @BindView(R.id.ratingBar)
+    SimpleRatingBar ratingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,24 +66,29 @@ public class CriticsDetailActivity extends AppCompatActivity {
         if (critics != null) {
             tvName.setText(critics.getName());
             tvContent.setText(critics.getCritics());
+            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            tvDate.setText(sdf.format(critics.getCreateTime()));
+            ratingBar.setRating(critics.getStars());
+            ratingBar.setIndicator(true); //详情页不能点击评分条
+
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(CriticsDetailActivity.this,MainActivity.class);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(CriticsDetailActivity.this, MainActivity.class);
             startActivity(intent);
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    @OnClick({R.id.left_arrow, R.id.iv_edit, R.id.iv_delete,R.id.iv_share})
+    @OnClick({R.id.left_arrow, R.id.iv_edit, R.id.iv_delete, R.id.iv_share})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_arrow:
-                Intent intent1=new Intent(CriticsDetailActivity.this,MainActivity.class);
+                Intent intent1 = new Intent(CriticsDetailActivity.this, MainActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.iv_edit:
@@ -90,6 +102,8 @@ public class CriticsDetailActivity extends AppCompatActivity {
                 criticsDao.deleteByKey(id);
                 Log.d("TAGTAG", "成功删除该条目！");
                 Toast.makeText(CriticsDetailActivity.this, "成功删除该条目！", Toast.LENGTH_SHORT).show();
+                Intent intent2 = new Intent(CriticsDetailActivity.this, MainActivity.class);
+                startActivity(intent2);
                 finish();
                 break;
             case R.id.iv_share:

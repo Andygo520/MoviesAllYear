@@ -1,9 +1,11 @@
 package model;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.Generated;
+
+import java.util.Date;
 
 /**
  * Created by Administrator on 2017/1/4.
@@ -21,15 +23,19 @@ public class MovieCritics {
     private String critics;
 
     @NotNull
-    private String createTime;
+    private Date createTime;
 
-    @Generated(hash = 2092180991)
+    @NotNull
+    private int stars;// 电影的星级评分
+
+    @Generated(hash = 1413196413)
     public MovieCritics(Long id, @NotNull String name, @NotNull String critics,
-            @NotNull String createTime) {
+            @NotNull Date createTime, int stars) {
         this.id = id;
         this.name = name;
         this.critics = critics;
         this.createTime = createTime;
+        this.stars = stars;
     }
 
     @Generated(hash = 951596037)
@@ -60,12 +66,20 @@ public class MovieCritics {
         this.critics = critics;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return this.createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public int getStars() {
+        return this.stars;
+    }
+
+    public void setStars(int stars) {
+        this.stars = stars;
     }
 
 }

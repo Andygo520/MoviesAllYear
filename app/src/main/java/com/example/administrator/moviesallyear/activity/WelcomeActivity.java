@@ -1,4 +1,4 @@
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.AppExit;
+import com.example.administrator.moviesallyear.R;
 
 import java.util.Random;
 

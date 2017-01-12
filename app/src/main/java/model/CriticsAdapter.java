@@ -2,13 +2,13 @@ package model;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.administrator.moviesallyear.R;
+import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -59,13 +59,17 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.mOnItemClickListener = listener;
     }
 
-    //判断item类别，是影评还是显示日期（影评有标题）
+    //     作为显示多种布局的依据
+    //判断item类别，是普通影评还是带日期的影评
     @Override
     public int getItemViewType(int position) {
-        if (!TextUtils.isEmpty(movieList.get(position).getName())) {
-            return 0;
-        } else {
+        if (position == 0) {
             return 1;
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            String date = sdf.format(movieList.get(position).getCreateTime());
+            String date1 = sdf.format(movieList.get(position - 1).getCreateTime());
+            return date.equals(date1) ? 0 : 1;
         }
     }
 
@@ -73,28 +77,38 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == 0) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_critics_item, parent, false);
-            ViewHolder holder = new ViewHolder(view);
+            NormalCriticsHolder holder = new NormalCriticsHolder(view);
             //将创建的View注册点击事件
             view.setOnClickListener(this);
             view.setOnLongClickListener(this);
             return holder;
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_date, parent, false);
-            ViewHolder2 holder2 = new ViewHolder2(view);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_critics_with_date_item, parent, false);
+            DateCriticsHolder holder2 = new DateCriticsHolder(view);
             return holder2;
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        //将数据与item视图进行绑定，如果是MyViewHolder就加载网络图片，如果是MyViewHolder2就显示页数
-        if (holder instanceof ViewHolder) {
-            ((ViewHolder)holder).tvName.setText(movieList.get(position).getName());
-            ((ViewHolder)holder).tvContent.setText(movieList.get(position).getCritics());
-            ((ViewHolder)holder).tvTime.setText(movieList.get(position).getCreateTime());
-        } else if (holder instanceof ViewHolder2) {
-            SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
-            ((ViewHolder2)holder).tv.setText(sdf.format(movieList.get(position).getCreateTime()));
+        //将数据与item视图进行绑定，如果是MyViewHolder就加载网络图片，如果是MyDateCriticsHolder就显示页数
+        if (holder instanceof NormalCriticsHolder) {
+            ((NormalCriticsHolder) holder).tvName.setText(movieList.get(position).getName());
+            ((NormalCriticsHolder) holder).tvContent.setText(movieList.get(position).getCritics());
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
+            ((NormalCriticsHolder) holder).tvTime.setText(sdf.format(movieList.get(position).getCreateTime()));
+            ((NormalCriticsHolder) holder).ratingBar.setRating(movieList.get(position).getStars());
+            ((NormalCriticsHolder) holder).ratingBar.setIndicator(true);// 列表不能修改评分
+
+        } else if (holder instanceof DateCriticsHolder) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            ((DateCriticsHolder) holder).tv.setText(sdf.format(movieList.get(position).getCreateTime()));
+            ((DateCriticsHolder) holder).tvName.setText(movieList.get(position).getName());
+            ((DateCriticsHolder) holder).tvContent.setText(movieList.get(position).getCritics());
+            SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd HH:mm");
+            ((DateCriticsHolder) holder).tvTime.setText(sdf1.format(movieList.get(position).getCreateTime()));
+            ((DateCriticsHolder) holder).ratingBar.setRating(movieList.get(position).getStars());
+            ((DateCriticsHolder) holder).ratingBar.setIndicator(true);// 列表不能修改评分
         }
 
     }
@@ -105,25 +119,35 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-    //自定义ViewHolder，用于显示影评
-    class ViewHolder extends RecyclerView.ViewHolder {
+    //自定义ViewHolder，用于显示普通影评
+    class NormalCriticsHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvContent, tvTime;
+        SimpleRatingBar ratingBar;
 
-        public ViewHolder(View itemView) {
+        public NormalCriticsHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tv_name);
             tvContent = (TextView) itemView.findViewById(R.id.tv_content);
             tvTime = (TextView) itemView.findViewById(R.id.tv_createTime);
+            ratingBar = (SimpleRatingBar) itemView.findViewById(R.id.ratingBar);
+
         }
     }
 
-    //自定义ViewHolder，用于显示不同日期
-    class ViewHolder2 extends RecyclerView.ViewHolder {
+    //自定义ViewHolder，用于显示带日期的影评
+    class DateCriticsHolder extends RecyclerView.ViewHolder {
         private TextView tv;
+        TextView tvName, tvContent, tvTime;
+        SimpleRatingBar ratingBar;
 
-        public ViewHolder2(View view) {
+
+        public DateCriticsHolder(View view) {
             super(view);
             tv = (TextView) view.findViewById(R.id.tv_date);
+            tvName = (TextView) view.findViewById(R.id.tv_name);
+            tvContent = (TextView) view.findViewById(R.id.tv_content);
+            tvTime = (TextView) view.findViewById(R.id.tv_createTime);
+            ratingBar = (SimpleRatingBar) view.findViewById(R.id.ratingBar);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +10,10 @@ import android.widget.Toast;
 
 import com.AppExit;
 import com.MyApplication;
+import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
+import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -21,6 +22,7 @@ import butterknife.OnClick;
 import model.MovieCritics;
 
 public class WriteCriticsActivity extends AppCompatActivity {
+
     private Context context;
     private MovieCriticsDao criticsDao;
     private int flag;// 标志位，用来判断是修改影评还是新增
@@ -32,6 +34,8 @@ public class WriteCriticsActivity extends AppCompatActivity {
     EditText etContent;
     @BindView(R.id.btn_save_critics)
     Button btnSaveCritics;
+    @BindView(R.id.ratingBar)
+    SimpleRatingBar ratingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +54,11 @@ public class WriteCriticsActivity extends AppCompatActivity {
             MovieCritics critics = criticsDao.load(id);
             etName.setText(critics.getName());
             etContent.setText(critics.getCritics());
+            ratingBar.setRating(critics.getStars());
         }
 //        从MovieDetailActivity跳转而来
-        else if (flag == -999){
-            String title=getIntent().getStringExtra("Title");
+        else if (flag == -999) {
+            String title = getIntent().getStringExtra("Title");
             etName.setText(title);
         }
 
@@ -63,6 +68,9 @@ public class WriteCriticsActivity extends AppCompatActivity {
     public void onClick() {
         String name = etName.getText().toString().trim();
         String content = etContent.getText().toString().trim();
+//        获取用户的评分
+        int starNum= (int) ratingBar.getRating();
+
         if (name.equalsIgnoreCase("")) {
             Toast.makeText(context, "请输入标题", Toast.LENGTH_SHORT).show();
             return;
@@ -71,17 +79,20 @@ public class WriteCriticsActivity extends AppCompatActivity {
             Toast.makeText(context, "请输入内容", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (starNum==0){
+            Toast.makeText(context, "一颗星都不给也太狠了吧", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
 //      得到创建影评的时间
         long createTime = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time = sdf.format(new Date(createTime));
+        Date date=new Date(createTime);
 
 //       flag为999代表更新数据(id不变)，否则就为插入新数据
         if (flag == 999)
-            criticsDao.update(new MovieCritics(id, name, content, time));
+            criticsDao.update(new MovieCritics(id, name, content,date,starNum));
         else
-            criticsDao.insert(new MovieCritics(null, name, content, time));
+            criticsDao.insert(new MovieCritics(null, name, content,date,starNum));
         Intent intent = new Intent(context, MainActivity.class);
         startActivity(intent);
         finish();
