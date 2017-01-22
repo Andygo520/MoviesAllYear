@@ -27,7 +27,7 @@ public class MovieCriticsDao extends AbstractDao<MovieCritics, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Name = new Property(1, String.class, "name", false, "NAME");
         public final static Property Critics = new Property(2, String.class, "critics", false, "CRITICS");
-        public final static Property CreateTime = new Property(3, java.util.Date.class, "createTime", false, "CREATE_TIME");
+        public final static Property CreateTime = new Property(3, String.class, "createTime", false, "CREATE_TIME");
         public final static Property Stars = new Property(4, int.class, "stars", false, "STARS");
     }
 
@@ -47,7 +47,7 @@ public class MovieCriticsDao extends AbstractDao<MovieCritics, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"NAME\" TEXT NOT NULL ," + // 1: name
                 "\"CRITICS\" TEXT NOT NULL ," + // 2: critics
-                "\"CREATE_TIME\" INTEGER NOT NULL ," + // 3: createTime
+                "\"CREATE_TIME\" TEXT NOT NULL ," + // 3: createTime
                 "\"STARS\" INTEGER NOT NULL );"); // 4: stars
     }
 
@@ -67,7 +67,7 @@ public class MovieCriticsDao extends AbstractDao<MovieCritics, Long> {
         }
         stmt.bindString(2, entity.getName());
         stmt.bindString(3, entity.getCritics());
-        stmt.bindLong(4, entity.getCreateTime().getTime());
+        stmt.bindString(4, entity.getCreateTime());
         stmt.bindLong(5, entity.getStars());
     }
 
@@ -81,7 +81,7 @@ public class MovieCriticsDao extends AbstractDao<MovieCritics, Long> {
         }
         stmt.bindString(2, entity.getName());
         stmt.bindString(3, entity.getCritics());
-        stmt.bindLong(4, entity.getCreateTime().getTime());
+        stmt.bindString(4, entity.getCreateTime());
         stmt.bindLong(5, entity.getStars());
     }
 
@@ -96,7 +96,7 @@ public class MovieCriticsDao extends AbstractDao<MovieCritics, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // name
             cursor.getString(offset + 2), // critics
-            new java.util.Date(cursor.getLong(offset + 3)), // createTime
+            cursor.getString(offset + 3), // createTime
             cursor.getInt(offset + 4) // stars
         );
         return entity;
@@ -107,7 +107,7 @@ public class MovieCriticsDao extends AbstractDao<MovieCritics, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setName(cursor.getString(offset + 1));
         entity.setCritics(cursor.getString(offset + 2));
-        entity.setCreateTime(new java.util.Date(cursor.getLong(offset + 3)));
+        entity.setCreateTime(cursor.getString(offset + 3));
         entity.setStars(cursor.getInt(offset + 4));
      }
     

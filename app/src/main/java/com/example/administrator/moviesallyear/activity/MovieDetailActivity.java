@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -87,7 +88,11 @@ public class MovieDetailActivity extends AppCompatActivity {
                         MovieItem item = JSON.parseObject(s, MovieItem.class);
 
                         String mobile_url = item.getMobile_url();
+                        Log.d("mobile_url",mobile_url);
+                        WebSettings webSettings=webView.getSettings();
+                        webSettings.setJavaScriptEnabled(true);
                         webView.loadUrl(mobile_url);
+//                        设置在本WebView中打开页面，而不是在默认浏览器中
                         webView.setWebViewClient(new WebViewClient() {
                             @Override
                             public boolean shouldOverrideUrlLoading(WebView view, String url) {

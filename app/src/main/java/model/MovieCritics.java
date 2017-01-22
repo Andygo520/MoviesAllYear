@@ -5,8 +5,6 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 
-import java.util.Date;
-
 /**
  * Created by Administrator on 2017/1/4.
  */
@@ -23,14 +21,14 @@ public class MovieCritics {
     private String critics;
 
     @NotNull
-    private Date createTime;
+    private String createTime;
 
     @NotNull
     private int stars;// 电影的星级评分
 
-    @Generated(hash = 1413196413)
+    @Generated(hash = 1592539121)
     public MovieCritics(Long id, @NotNull String name, @NotNull String critics,
-            @NotNull Date createTime, int stars) {
+            @NotNull String createTime, int stars) {
         this.id = id;
         this.name = name;
         this.critics = critics;
@@ -66,11 +64,11 @@ public class MovieCritics {
         this.critics = critics;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return this.createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 

@@ -18,7 +18,7 @@ import helper.VolleyHelper;
  * Created by Administrator on 2016/12/28.
  */
 
-public class MovieSearchedAdapter extends RecyclerView.Adapter<MovieSearchedAdapter.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> implements View.OnClickListener, View.OnLongClickListener {
     private Context context;
     private List<String> titleList;
     private List<String> castList;
@@ -31,7 +31,7 @@ public class MovieSearchedAdapter extends RecyclerView.Adapter<MovieSearchedAdap
         void onItemLongClick(View view, int positon);
     }
 
-    public MovieSearchedAdapter(List<String> titleList, List<String> castList,List<String> imageUrlList, Context context) {
+    public MoviesAdapter(List<String> titleList, List<String> castList, List<String> imageUrlList, Context context) {
         this.titleList = titleList;
         this.castList = castList;
         this.imageUrlList=imageUrlList;

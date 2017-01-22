@@ -7,14 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.MyApplication;
 import com.example.administrator.moviesallyear.R;
+import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
-import java.text.SimpleDateFormat;
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/12/30.
+ * Created by Administrator on 2NormalCriticsDateCritics6/DateCritics2/3NormalCritics.
  */
 
 //为RecyclerView的每个子item设置setOnClickListener，然后在onClick中再调用一次对外封装的接口，将这个事件传递给外面的调用者。而“为RecyclerView的每个子item设置setOnClickListener”在Adapter中设置。
@@ -22,6 +25,9 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private List<MovieCritics> movieList;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
+    private final int NormalCriticsFlag= 0;// 普通影评的标志
+    private final int DateCriticsFlag= 1;//带日期影评标志
+
 
     public static interface OnRecyclerViewItemClickListener {
         void onItemClick(View view, int position);
@@ -64,18 +70,18 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-            return 1;
+            return DateCriticsFlag;
         } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-            String date = sdf.format(movieList.get(position).getCreateTime());
-            String date1 = sdf.format(movieList.get(position - 1).getCreateTime());
-            return date.equals(date1) ? 0 : 1;
+//            获取影评创建日期的年月字段（长度为7）
+            String date = movieList.get(position).getCreateTime().substring(0,7);
+            String date1 = movieList.get(position - 1).getCreateTime().substring(0,7);
+            return date.equals(date1) ? NormalCriticsFlag : DateCriticsFlag;
         }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == 0) {
+        if (viewType == NormalCriticsFlag) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_critics_item, parent, false);
             NormalCriticsHolder holder = new NormalCriticsHolder(view);
             //将创建的View注册点击事件
@@ -91,22 +97,24 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        //将数据与item视图进行绑定，如果是MyViewHolder就加载网络图片，如果是MyDateCriticsHolder就显示页数
+        //将数据与item视图进行绑定
         if (holder instanceof NormalCriticsHolder) {
             ((NormalCriticsHolder) holder).tvName.setText(movieList.get(position).getName());
             ((NormalCriticsHolder) holder).tvContent.setText(movieList.get(position).getCritics());
-            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
-            ((NormalCriticsHolder) holder).tvTime.setText(sdf.format(movieList.get(position).getCreateTime()));
+            ((NormalCriticsHolder) holder).tvTime.setText(movieList.get(position).getCreateTime().substring(5,16));//只显示月-日 时：分字段
             ((NormalCriticsHolder) holder).ratingBar.setRating(movieList.get(position).getStars());
             ((NormalCriticsHolder) holder).ratingBar.setIndicator(true);// 列表不能修改评分
 
         } else if (holder instanceof DateCriticsHolder) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-            ((DateCriticsHolder) holder).tv.setText(sdf.format(movieList.get(position).getCreateTime()));
+
+//           创建MovieCriticsDao数据库对象，通过数据库查询出每月所看电影的数量（qb.buildCount().count()）
+            MovieCriticsDao criticsDao= MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
+            QueryBuilder qb=criticsDao.queryBuilder().where(MovieCriticsDao.Properties.CreateTime.like("%"+movieList.get(position).getCreateTime().substring(0,7)+"%"));
+            long count=qb.buildCount().count();
+            ((DateCriticsHolder) holder).tvDate.setText(movieList.get(position).getCreateTime().substring(0,7)+"（"+count+"部）");
             ((DateCriticsHolder) holder).tvName.setText(movieList.get(position).getName());
             ((DateCriticsHolder) holder).tvContent.setText(movieList.get(position).getCritics());
-            SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd HH:mm");
-            ((DateCriticsHolder) holder).tvTime.setText(sdf1.format(movieList.get(position).getCreateTime()));
+            ((DateCriticsHolder) holder).tvTime.setText(movieList.get(position).getCreateTime().substring(5,16));
             ((DateCriticsHolder) holder).ratingBar.setRating(movieList.get(position).getStars());
             ((DateCriticsHolder) holder).ratingBar.setIndicator(true);// 列表不能修改评分
         }
@@ -136,14 +144,14 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     //自定义ViewHolder，用于显示带日期的影评
     class DateCriticsHolder extends RecyclerView.ViewHolder {
-        private TextView tv;
+        TextView tvDate;
         TextView tvName, tvContent, tvTime;
         SimpleRatingBar ratingBar;
 
 
         public DateCriticsHolder(View view) {
             super(view);
-            tv = (TextView) view.findViewById(R.id.tv_date);
+            tvDate = (TextView) view.findViewById(R.id.tv_date);
             tvName = (TextView) view.findViewById(R.id.tv_name);
             tvContent = (TextView) view.findViewById(R.id.tv_content);
             tvTime = (TextView) view.findViewById(R.id.tv_createTime);
