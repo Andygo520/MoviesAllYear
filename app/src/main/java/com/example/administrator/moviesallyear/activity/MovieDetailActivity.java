@@ -12,30 +12,29 @@ import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 
-import com.AppExit;
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.example.administrator.moviesallyear.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import helper.UrlHelper;
-import helper.VolleyHelper;
 import model.MovieItem;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
     @BindView(R.id.imageview)
-    NetworkImageView imageview;
+    ImageView imageview;
     private Context context;
-    private String title, itemId,imageUrl;// 电影名,电影id,图片
+    private String title, itemId, imageUrl;// 电影名,电影id,图片
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.toolbar_layout)
@@ -54,7 +53,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        AppExit.getInstance().addActivity(this);
 
         context = MovieDetailActivity.this;
 //        获取列表界面传递过来的电影id以及电影名
@@ -62,7 +60,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         title = getIntent().getStringExtra("Title");
         imageUrl = getIntent().getStringExtra("ImageUrl");
         toolbarLayout.setTitle(title);
-        VolleyHelper.showImageByUrl(context,imageUrl,imageview);
+        Glide.with(context).load(imageUrl).fitCenter().into(imageview);
 
         Log.d("itemId", itemId);
         String url = UrlHelper.item_url.replace("{id}", itemId);
@@ -88,8 +86,8 @@ public class MovieDetailActivity extends AppCompatActivity {
                         MovieItem item = JSON.parseObject(s, MovieItem.class);
 
                         String mobile_url = item.getMobile_url();
-                        Log.d("mobile_url",mobile_url);
-                        WebSettings webSettings=webView.getSettings();
+                        Log.d("mobile_url", mobile_url);
+                        WebSettings webSettings = webView.getSettings();
                         webSettings.setJavaScriptEnabled(true);
                         webView.loadUrl(mobile_url);
 //                        设置在本WebView中打开页面，而不是在默认浏览器中

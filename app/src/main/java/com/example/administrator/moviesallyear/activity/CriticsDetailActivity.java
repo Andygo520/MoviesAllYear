@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.AppExit;
-import com.MyApplication;
+import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
@@ -54,7 +54,6 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_critics_detail);
         ButterKnife.bind(this);
-        AppExit.getInstance().addActivity(this);
 //        初始化ShareSDK操作
         ShareSDK.initSDK(CriticsDetailActivity.this);
 
@@ -81,7 +80,7 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
             }
         });
 //       初始化数据库对象,并通过主键得到具体影评对象
-        criticsDao = MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
+        criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
         id = getIntent().getLongExtra("id", -1);
         critics = criticsDao.load(id);
         if (critics != null) {

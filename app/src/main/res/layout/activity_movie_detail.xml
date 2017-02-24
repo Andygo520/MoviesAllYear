@@ -23,7 +23,7 @@
             app:statusBarScrim="@color/colorBase"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
             <!--电影图片-->
-            <com.android.volley.toolbox.NetworkImageView
+            <ImageView
                 android:id="@+id/imageview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

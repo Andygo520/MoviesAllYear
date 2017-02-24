@@ -7,7 +7,6 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
-import com.AppExit;
 import com.example.administrator.moviesallyear.R;
 
 import java.util.Random;
@@ -25,6 +24,7 @@ public class WelcomeActivity extends AppCompatActivity {
             if (msg.what == 999) {
                 Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         }
     };
@@ -34,7 +34,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
-        AppExit.getInstance().addActivity(this);
 
         int[] welcome_images={R.mipmap.welcome_1,R.mipmap.welcome_2,R.mipmap.welcome_3};
 //      将[0,3)的任意整数赋值给i

@@ -19,7 +19,7 @@
         android:paddingBottom="8dp"
         android:orientation="horizontal">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/item_iv"
             android:layout_width="120dp"
             android:layout_height="100dp"

@@ -1,5 +1,6 @@
 package com.example.administrator.moviesallyear.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-import com.AppExit;
 import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.fragment.CriticsFragment;
 import com.example.administrator.moviesallyear.fragment.ExploreFragment;
@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        AppExit.getInstance().addActivity(this);
 
         viewPager.setAdapter(new MyAdapter(getSupportFragmentManager()));
 //        将TabLayout和ViewPager关联起来
@@ -49,11 +48,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
                 time = System.currentTimeMillis();
             } else {
-//                Intent intent = new Intent(Intent.ACTION_MAIN);
-//                intent.addCategory(Intent.CATEGORY_HOME);
-//                startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
                 //退出
-                AppExit.getInstance().exit();
+//                AppExit.getInstance().exit();
+//                finish();
+//                System.exit(0);
             }
             return true;
         } else {
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
     class MyAdapter extends FragmentPagerAdapter {
         public MyAdapter(FragmentManager fm) {

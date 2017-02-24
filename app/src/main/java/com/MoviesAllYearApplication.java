@@ -5,25 +5,33 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.greendao.gen.DaoMaster;
 import com.greendao.gen.DaoSession;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * 完成GreenDao的初始化操作
  * Created by Administrator on 2017/1/4.
  */
 
-public class MyApplication extends Application {
+public class MoviesAllYearApplication extends Application {
     private DaoMaster.DevOpenHelper mHelper;
     private SQLiteDatabase db;
     private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
-    public static MyApplication instances;
+    private static MoviesAllYearApplication instances;
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+        // Normal app init code...
         instances = this;
         setDatabase();
     }
-    public static MyApplication getInstances(){
+    public static MoviesAllYearApplication getInstances(){
         return instances;
     }
 

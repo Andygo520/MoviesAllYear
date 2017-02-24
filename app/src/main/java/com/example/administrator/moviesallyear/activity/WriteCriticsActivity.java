@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.AppExit;
-import com.MyApplication;
+import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
@@ -27,8 +27,6 @@ import butterknife.OnClick;
 import model.MovieCritics;
 
 public class WriteCriticsActivity extends AppCompatActivity {
-
-
     private Context context;
     private MovieCriticsDao criticsDao;
     private int flag;// 标志位，用来判断是修改影评还是新增
@@ -56,13 +54,12 @@ public class WriteCriticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_critics);
         ButterKnife.bind(this);
-        AppExit.getInstance().addActivity(this);
 
         ivEdit.setVisibility(View.GONE);
         tvTitle.setText("写影评");
         context = WriteCriticsActivity.this;
 //       获得MovieCriticsDao对象
-        criticsDao = MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
+        criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
         flag = getIntent().getIntExtra("Flag", 0);
 //        修改影评
         if (flag == 999) {

@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.MyApplication;
+import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
@@ -108,7 +108,7 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (holder instanceof DateCriticsHolder) {
 
 //           创建MovieCriticsDao数据库对象，通过数据库查询出每月所看电影的数量（qb.buildCount().count()）
-            MovieCriticsDao criticsDao= MyApplication.getInstances().getDaoSession().getMovieCriticsDao();
+            MovieCriticsDao criticsDao= MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
             QueryBuilder qb=criticsDao.queryBuilder().where(MovieCriticsDao.Properties.CreateTime.like("%"+movieList.get(position).getCreateTime().substring(0,7)+"%"));
             long count=qb.buildCount().count();
             ((DateCriticsHolder) holder).tvDate.setText(movieList.get(position).getCreateTime().substring(0,7)+"（"+count+"部）");
