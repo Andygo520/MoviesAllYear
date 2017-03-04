@@ -32,6 +32,10 @@ import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.activity.MovieDetailActivity;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -72,6 +76,7 @@ public class ExploreFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
 
         init();
         return view;
@@ -140,6 +145,12 @@ public class ExploreFragment extends Fragment {
         });
     }
 
+//   处理事件
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void handleEvent(String name){
+        etSearchInput.setHint(name);
+    }
+
     public void getMovieInfor(final String url) {
         new Thread(new Runnable() {
             @Override
@@ -205,6 +216,11 @@ public class ExploreFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
     @OnClick({R.id.ivDelete, R.id.llSearch})
     public void onClick(View view) {

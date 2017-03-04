@@ -12,11 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.AppExit;
 import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,6 +87,9 @@ public class WriteCriticsActivity extends AppCompatActivity {
                 break;
             case R.id.btn_save_critics:
                 String name = etName.getText().toString().trim();
+
+//        发送事件
+                EventBus.getDefault().postSticky(name);
                 String content = etContent.getText().toString().trim();
 //        获取用户的评分
                 int starNum = (int) ratingBar.getRating();
