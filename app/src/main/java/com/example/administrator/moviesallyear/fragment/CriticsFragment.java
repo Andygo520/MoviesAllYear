@@ -1,7 +1,10 @@
 package com.example.administrator.moviesallyear.fragment;
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,12 +15,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
@@ -34,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import helper.OnRecyclerItemClickListener;
+import helper.ShareHelper;
 import model.CriticsAdapter;
 import model.CriticsSearchedAdapter;
 import model.MovieCritics;
@@ -45,6 +51,8 @@ public class CriticsFragment extends Fragment {
     private String query;//用户搜索的内容
     private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
     private List<MovieCritics> movieCriticsList;// 根据时间排序的recyclerView的数据源
+    private String[] items={"编辑","删除","分享"};
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.recyclerView)
@@ -162,7 +170,41 @@ public class CriticsFragment extends Fragment {
             recyclerView.setAdapter(new CriticsAdapter(movieList, context));
         recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
             @Override
-            public void onLongClick(RecyclerView.ViewHolder vh) {
+            public void onLongClick(final RecyclerView.ViewHolder vh) {
+                //                获得点击条目的位置
+                final int position = vh.getLayoutPosition() - 1;
+                Log.d("po0000",position+"");
+                final MovieCritics movieCritics = movieList.get(position);
+                final long id=movieCritics.getId();
+                Dialog dialog=new AlertDialog.Builder(getActivity())
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                    switch (i){
+                                        case 0:
+                                            Intent intent=new Intent(getActivity(),WriteCriticsActivity.class);
+                                            intent.putExtra("Flag",999);// 修改影评的标志位
+                                            intent.putExtra("id",id);
+                                            startActivity(intent);
+                                            break;
+                                        case 1:
+                                            criticsDao.deleteByKey(id);
+                                            Toast.makeText(getActivity(),"删除成功",Toast.LENGTH_SHORT).show();
+//                                          从数据库查询数据(根据创建时间降序排列)
+                                            movieCriticsList = criticsDao.queryBuilder()
+                                                    .orderDesc(MovieCriticsDao.Properties.CreateTime)
+                                                    .list();
+                                            CriticsAdapter adapter=new CriticsAdapter(movieCriticsList,getActivity());
+//                                            adapter.notifyItemRangeChanged(position,movieList.size()-position);
+                                            recyclerView.setAdapter(adapter);
+                                            break;
+                                        case 2:
+                                            ShareHelper.showShare(getActivity(),movieCritics);
+                                            break;
+                                    }
+                            }
+                        }).create();
+                        dialog.show();
             }
 
             @Override
@@ -195,7 +237,7 @@ public class CriticsFragment extends Fragment {
         //实现淡入浅出的页面跳转效果
         // getActivity().overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         //由左向右滑入的效果
-       //getActivity().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        //getActivity().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         //实现zoommin 和 zoomout,即类似iphone的进入和退出时的效果
         //getActivity().overridePendingTransition(R.anim.zoomin, R.anim.zoomout);
     }

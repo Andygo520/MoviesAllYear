@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.AppExit;
 import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
@@ -23,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.onekeyshare.OnekeyShare;
+import helper.ShareHelper;
 import model.MovieCritics;
 
 public class CriticsDetailActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -72,7 +71,7 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
                         break;
                     case R.id.item_share:
 //                       显示分享界面
-                        showShare();
+                        ShareHelper.showShare(CriticsDetailActivity.this,critics);
                         break;
                 }
                 return false;
@@ -137,30 +136,4 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
         return false;
     }
 
-    private void showShare() {
-        ShareSDK.initSDK(this);
-        OnekeyShare oks = new OnekeyShare();
-        //关闭sso授权
-        oks.disableSSOWhenAuthorize();
-
-        // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间等使用
-        oks.setTitle("标题");
-        // titleUrl是标题的网络链接，QQ和QQ空间等使用
-         oks.setTitleUrl("http://sharesdk.cn");
-        // text是分享文本，所有平台都需要这个字段
-        String shareText=critics.getCritics()+"——《"+critics.getName()+"》";//设定分享的文本
-        oks.setText(shareText);
-        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-//        oks.setImagePath("/sdcard/1.jpg");//确保SDcard下面存在此张图片
-        // url仅在微信（包括好友和朋友圈）中使用
-        oks.setUrl("http://sharesdk.cn");
-        // comment是我对这条分享的评论，仅在人人网和QQ空间使用
-        oks.setComment(shareText);
-        // site是分享此内容的网站名称，仅在QQ空间使用
-        oks.setSite(getString(R.string.app_name));
-        // siteUrl是分享此内容的网站地址，仅在QQ空间使用
-        oks.setSiteUrl("http://sharesdk.cn");
-        // 启动分享GUI
-        oks.show(this);
-    }
 }
