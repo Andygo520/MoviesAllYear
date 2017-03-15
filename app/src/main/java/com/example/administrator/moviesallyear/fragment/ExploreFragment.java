@@ -8,10 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -46,17 +43,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import helper.OnRecyclerItemClickListener;
 import helper.UrlHelper;
+import model.MovieAdapter;
 import model.MovieInSearch;
-import model.MoviesAdapter;
+import model.MovieItem;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ExploreFragment extends Fragment {
-
     private String query;//用户搜索的内容
     private String url;//用户搜索的信息对应的URL
-    private List<String> titles, casts, imageUrls;// 用来存放电影标题、演员、电影图片的列表
+    private List<MovieItem> movies=new ArrayList<>();
 
     @BindView(R.id.etSearchInput)
     EditText etSearchInput;
@@ -76,6 +73,7 @@ public class ExploreFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
         ButterKnife.bind(this, view);
+//        注册消息订阅者
         EventBus.getDefault().register(this);
 
         init();
@@ -83,10 +81,6 @@ public class ExploreFragment extends Fragment {
     }
 
     public void init() {
-        titles = new ArrayList<>();
-        casts = new ArrayList<>();
-        imageUrls = new ArrayList<>();
-
         //        默认设置XRecyclerView不能下拉刷新以及上拉加载更多
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setPullRefreshEnabled(false);
@@ -135,19 +129,18 @@ public class ExploreFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().equals("")){
+                if (s.toString().equals("")) {
                     ivDelete.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.GONE);//隐藏recyclerView
-                }
-                else
+                } else
                     ivDelete.setVisibility(View.VISIBLE);
             }
         });
     }
 
-//   处理事件
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void handleEvent(String name){
+    //   处理事件
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void handleEvent(String name) {
         etSearchInput.setHint(name);
     }
 
@@ -161,32 +154,20 @@ public class ExploreFragment extends Fragment {
                     public void onResponse(String s) {
                         MovieInSearch info = JSON.parseObject(s, MovieInSearch.class);
                         final List<MovieInSearch.SubjectsBean> subjects = info.getSubjects();
-//                      每次从后台取数据前先清空列表数据
-                        titles.clear();
-                        casts.clear();
-                        imageUrls.clear();
 //                        通过一层循环取出电影条目的标题、大图标地址URL
                         for (MovieInSearch.SubjectsBean item : subjects) {
-                            titles.add(item.getTitle());
+                            String title=item.getTitle();
+                            String image_url=item.getImages().getLarge();
                             List<MovieInSearch.SubjectsBean.CastsBean> castsBean = item.getCasts();
 //                            通过二层循环取出演员姓名列表
-                            String strCasts = "";
+                            List<String> casts=new ArrayList<String>();
                             for (MovieInSearch.SubjectsBean.CastsBean actors : castsBean) {
-                                strCasts += actors.getName() + "，";
+                              casts.add(actors.getName());
                             }
-//                          使用SpannableStringBuilder让文本框同时显示不同的样式
-                            SpannableStringBuilder ssb = new SpannableStringBuilder();
-                            ssb.append("主演：");
-                            if (strCasts.length() > 0)
-                                ssb.append(strCasts.substring(0, strCasts.length() - 1));
-                            ForegroundColorSpan span = new ForegroundColorSpan(getResources().getColor(R.color.colorBase));
-                            ssb.setSpan(span, 0, 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                            casts.add(ssb.toString());
-
-                            imageUrls.add(item.getImages().getLarge());
+                            movies.add(new MovieItem(title,casts,image_url));
                         }
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerView.setAdapter(new MoviesAdapter(titles, casts, imageUrls, getActivity()));
+                        recyclerView.setAdapter(new MovieAdapter(getActivity(),movies, R.layout.list_item));
                         recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
                             @Override
                             public void onLongClick(RecyclerView.ViewHolder vh) {
@@ -232,16 +213,22 @@ public class ExploreFragment extends Fragment {
             case R.id.llSearch:
 //            获取用户的输入，并对输入内容进行utf-8格式的编码（避免中文的不兼容）
                 query = etSearchInput.getText().toString().trim();
-                if (query.equals("")) {
+                String hintText = (String) etSearchInput.getHint();
+                if (query.equals("") && hintText.equals("")) {
                     Toast.makeText(getActivity(), "请输入内容后再搜索", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 try {
                     query = URLEncoder.encode(query, "utf-8");
+                    hintText = URLEncoder.encode(hintText, "utf-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                url = UrlHelper.query_url.replace("{query}", query);
+           //  如果用户没有输入，可以直接根据EditText的hint内容来搜索
+                if (query.equals(""))
+                    url = UrlHelper.query_url.replace("{query}", hintText);
+                else
+                    url = UrlHelper.query_url.replace("{query}", query);
                 getMovieInfor(url);
                 break;
         }

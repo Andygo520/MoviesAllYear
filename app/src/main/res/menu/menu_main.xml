@@ -15,4 +15,8 @@
         android:id="@+id/item_order_stars"
         android:title="按评分排序"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/item_output_critics"
+        android:title="导出到本地"
+        app:showAsAction="never" />
 </menu>
