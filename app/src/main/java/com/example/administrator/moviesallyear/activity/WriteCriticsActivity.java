@@ -118,7 +118,7 @@ public class WriteCriticsActivity extends AppCompatActivity {
                     criticsDao.update(new MovieCritics(id, name, content, time, starNum));
                 else
                     criticsDao.insert(new MovieCritics(null, name, content, time, starNum));
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(context, MainActivity1.class);
                 startActivity(intent);
                 finish();
                 break;

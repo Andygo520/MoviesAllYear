@@ -22,7 +22,7 @@ public class Top250Adapter extends SuperAdapter<MovieItem> {
 
     @Override
     public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, MovieItem item) {
-        holder.setText(R.id.tv, item.getTitle());
+        holder.setText(R.id.tv, item.getTitle()+"  "+item.getRating());
         ImageView imageView = holder.findViewById(R.id.iv);
         Glide.with(getContext())
                 .load(item.getImageUrl())

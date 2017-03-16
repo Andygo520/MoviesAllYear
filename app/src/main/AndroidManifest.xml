@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.MainActivity1"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MovieDetailActivity"
@@ -82,6 +82,7 @@
             android:name=".activity.Top250Activity"
             android:label="@string/title_activity_classic250"
             android:theme="@style/AppTheme" />
+        <activity android:name=".activity.MainActivity"></activity>
     </application>
 
 </manifest>

@@ -80,7 +80,8 @@ public class Top250Activity extends AppCompatActivity {
                         for (Top250Movie top250Movie : list) {
                             String title = top250Movie.getTitle();
                             String imageUrl = top250Movie.getImages().getLarge();
-                            data.add(new MovieItem(title, imageUrl));
+                            double rating = top250Movie.getRating().getAverage();
+                            data.add(new MovieItem(title,rating, imageUrl));
                         }
                         if (result.getStart() > 0) {
                             movieList.addAll(data);

@@ -9,6 +9,9 @@ import java.util.List;
 public class MovieItem {
 
     private String title;//电影名
+
+
+    private double rating;//评分
     private List<String> casts;//演员
     private String imageUrl;//图片地址
 
@@ -17,8 +20,10 @@ public class MovieItem {
         this.casts = casts;
         this.imageUrl = imageUrl;
     }
-    public MovieItem(String title, String imageUrl) {
+
+    public MovieItem(String title, double rating, String imageUrl) {
         this.title = title;
+        this.rating = rating;
         this.imageUrl = imageUrl;
     }
 
@@ -44,5 +49,13 @@ public class MovieItem {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

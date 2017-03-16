@@ -65,7 +65,7 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
                     case R.id.item_delete:
                         criticsDao.deleteByKey(id);
                         Toast.makeText(CriticsDetailActivity.this, "成功删除该条目！", Toast.LENGTH_SHORT).show();
-                        Intent intent2 = new Intent(CriticsDetailActivity.this, MainActivity.class);
+                        Intent intent2 = new Intent(CriticsDetailActivity.this, MainActivity1.class);
                         startActivity(intent2);
                         finish();
                         break;
@@ -100,7 +100,7 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(CriticsDetailActivity.this, MainActivity.class);
+            Intent intent = new Intent(CriticsDetailActivity.this, MainActivity1.class);
             startActivity(intent);
             finish();
             return true;
@@ -112,7 +112,7 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                Intent intent1 = new Intent(CriticsDetailActivity.this, MainActivity.class);
+                Intent intent1 = new Intent(CriticsDetailActivity.this, MainActivity1.class);
                 startActivity(intent1);
                 finish();
                 break;

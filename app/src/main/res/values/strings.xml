@@ -8,6 +8,10 @@
     <string name="hint_et_content">影评内容···</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_classic250">Classic250Activity</string>
+    <string name="more_movies">更多</string>
+    <string name="new_movies">热映中</string>
+    <string name="coming_movies">即将上映</string>
+    <string name="top250">豆瓣Top250</string>
+    <string name="critics">我的影评</string>
 </resources>
