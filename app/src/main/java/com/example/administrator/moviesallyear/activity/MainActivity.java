@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         style.setSpan(new AbsoluteSizeSpan(50), 0, 4, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //字号
         style.setSpan(new AbsoluteSizeSpan(40), 4, text.length() - 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //字号
         style.setSpan(new ForegroundColorSpan(Color.parseColor("#319BD9")), 0, 4, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //颜色
-        style.setSpan(new StyleSpan(Typeface.BOLD), 4, critics.getName().length() + 6, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //粗体
+        style.setSpan(new StyleSpan(Typeface.BOLD), 4, critics.getName().length() + 6, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //粗体,空格跟换行都算一个字符，所以要加6
         tvCritics.setText(style);
         getData(UrlHelper.beauty_url);
         getData1(UrlHelper.in_theaters_url);
