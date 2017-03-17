@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.AbsoluteSizeSpan;
@@ -23,10 +25,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
-import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +48,8 @@ import model.Top250Adapter;
 public class MainActivity extends AppCompatActivity {
     private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
     private List<MovieItem> data;
-    @BindView(R.id.picker)
-    DiscreteScrollView picker;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
     @BindView(R.id.tvCritics)
     TextView tvCritics;
     @BindView(R.id.tvComingMovies)
@@ -62,10 +66,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
-        init();
+        try {
+            init();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void init() {
+    private void init() throws UnsupportedEncodingException {
         data = new ArrayList<>();
         //        获取MovieCriticsDao对象
         criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
@@ -80,7 +88,10 @@ public class MainActivity extends AppCompatActivity {
         style.setSpan(new ForegroundColorSpan(Color.parseColor("#319BD9")), 0, 4, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //颜色
         style.setSpan(new StyleSpan(Typeface.BOLD), 4, critics.getName().length() + 6, Spannable.SPAN_EXCLUSIVE_INCLUSIVE); //粗体,空格跟换行都算一个字符，所以要加6
         tvCritics.setText(style);
-        getData(UrlHelper.beauty_url);
+        String url = URLEncoder.encode("福利", "utf-8");
+        String beautyUrl = UrlHelper.beauty_url.replace("福利", url);
+        Log.d("beautyUrl", beautyUrl);
+        getData(beautyUrl);
         getData1(UrlHelper.in_theaters_url);
     }
 
@@ -105,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("beautyurl", imageUrl);
                             data.add(new MovieItem(title, rating, imageUrl));
                         }
-                        picker.setAdapter(new Top250Adapter(MainActivity.this, data, R.layout.item_250));
+                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                        recyclerView.setAdapter(new Top250Adapter(MainActivity.this, data, R.layout.item_250));
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -126,12 +138,16 @@ public class MainActivity extends AppCompatActivity {
                 StringRequest request = new StringRequest(url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        Log.d("beautyurl", s);
                         Beauty beauty = JSON.parseObject(s, Beauty.class);
                         List<Beauty.ResultsBean> beautyList = beauty.getResults();
                         String beautyUrl = beautyList.get(0).getUrl();//获取最新的干货福利
-                        Log.d("beautyurl", beautyUrl);
-                        Glide.with(MainActivity.this).load(beautyUrl).into(ivBeauty);
+//                        Log.d("beautyurl", movie.getImage());
+                        Glide.with(MainActivity.this)
+                                .load(beautyUrl)
+                                .placeholder(R.mipmap.zhanwei)
+                                .thumbnail(0.1f)//使用缩略图，减少图片显示的空白时间
+                                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                                .into(ivBeauty);
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -148,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvCritics:
+                startActivity(new Intent(MainActivity.this, CriticsActivity.class));
+                finish();
                 break;
             case R.id.tvComingMovies:
                 break;

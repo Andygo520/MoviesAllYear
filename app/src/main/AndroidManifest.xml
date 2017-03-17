@@ -82,7 +82,8 @@
             android:name=".activity.Top250Activity"
             android:label="@string/title_activity_classic250"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.MainActivity"></activity>
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.CriticsActivity"></activity>
     </application>
 
 </manifest>

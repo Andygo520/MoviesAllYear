@@ -2,8 +2,7 @@ package com.example.administrator.moviesallyear.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
 
 import com.alibaba.fastjson.JSON;
 import com.android.volley.RequestQueue;
@@ -12,7 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.administrator.moviesallyear.R;
-import com.yarolegovich.discretescrollview.DiscreteScrollView;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +26,12 @@ import model.Top250Movie;
 
 public class Top250Activity extends AppCompatActivity {
 
+    @BindView(R.id.recyclerView)
+    XRecyclerView recyclerView;
     private List<MovieItem> data = new ArrayList<>();
     private List<MovieItem> movieList = new ArrayList<>();
-    private int start = 0;//从第start条开始显示
-    @BindView(R.id.picker)
-    DiscreteScrollView picker;
+    private int start = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,31 +39,24 @@ public class Top250Activity extends AppCompatActivity {
         setContentView(R.layout.activity_top250);
         ButterKnife.bind(this);
 
-        String url = UrlHelper.top250_url.replace("{start}", start + "");
-        getTop250(url);
-
-        picker.setScrollStateChangeListener(new DiscreteScrollView.ScrollStateChangeListener<RecyclerView.ViewHolder>() {
+        final String url = UrlHelper.top250_url.replace("{start}", start + "");
+        recyclerView.setLayoutManager(new LinearLayoutManager(Top250Activity.this));
+        recyclerView.setPullRefreshEnabled(false);
+        recyclerView.setLoadingMoreEnabled(true);
+        recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
-            public void onScrollStart(RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
+            public void onRefresh() {
 
             }
 
             @Override
-            public void onScrollEnd(RecyclerView.ViewHolder currentItemHolder, int adapterPosition) {
-                Log.d("adapterPosition", adapterPosition + "");
-                if (adapterPosition + 1 == start + 10) {
-                    start += 10;
-                    String url1 = UrlHelper.top250_url.replace("{start}", start + "");
-                    getTop250(url1);
-                }
-            }
-
-            @Override
-            public void onScroll(float scrollPosition) {
+            public void onLoadMore() {
+                start+=10;
+                getTop250(url);
 
             }
         });
-
+        getTop250(url);
     }
 
     private void getTop250(final String url) {
@@ -81,13 +74,13 @@ public class Top250Activity extends AppCompatActivity {
                             String title = top250Movie.getTitle();
                             String imageUrl = top250Movie.getImages().getLarge();
                             double rating = top250Movie.getRating().getAverage();
-                            data.add(new MovieItem(title,rating, imageUrl));
+                            data.add(new MovieItem(title, rating, imageUrl));
                         }
                         if (result.getStart() > 0) {
                             movieList.addAll(data);
-                            picker.setAdapter(new Top250Adapter(Top250Activity.this, movieList, R.layout.item_250));
+                            recyclerView.setAdapter(new Top250Adapter(Top250Activity.this, movieList, R.layout.list_item_250));
                         } else
-                            picker.setAdapter(new Top250Adapter(Top250Activity.this, data, R.layout.item_250));
+                            recyclerView.setAdapter(new Top250Adapter(Top250Activity.this, data, R.layout.list_item_250));
                     }
                 }, new Response.ErrorListener() {
                     @Override
