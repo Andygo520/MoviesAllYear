@@ -1,0 +1,39 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorBase"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/ToolbarTheme"></android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <!--@string/appbar_scrolling_view_behavior是系统提供的，用来使滑动控件与AppBarLayout互动-->
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!--com.example.administrator.moviesallyear.behavior.MyFabBehavior是自定义的Behavior，
+      通过重写Behavior中关于嵌套滑动的两个回调完成了FloatingActionButton的隐藏和显示判断及操作-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="10dp"
+        android:background="@color/colorBase"
+        android:src="@mipmap/add"
+        app:layout_behavior="com.example.administrator.moviesallyear.behavior.MyFabBehavior"
+        />
+
+</android.support.design.widget.CoordinatorLayout>
