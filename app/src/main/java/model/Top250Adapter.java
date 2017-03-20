@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.example.administrator.moviesallyear.R;
 
 import org.byteam.superadapter.SuperAdapter;
@@ -27,9 +27,13 @@ public class Top250Adapter extends SuperAdapter<MovieItem> {
         ImageView imageView = holder.findViewById(R.id.iv);
         Glide.with(getContext())
                 .load(item.getImageUrl())
-                .fitCenter()
-//                .thumbnail(0.1f)//使用缩略图，减少图片显示的空白时间
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(imageView);
+                .centerCrop()
+                .into(imageView)
+                .getSize(new SizeReadyCallback() {
+                    @Override
+                    public void onSizeReady(int width, int height) {
+
+                    }
+                });
     }
 }

@@ -6,11 +6,13 @@
     android:background="@drawable/linear_bg"
     android:orientation="vertical">
 
-    <ImageView
+    <com.example.administrator.moviesallyear.widget.RatioImageView
         android:id="@+id/iv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       />
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        />
 
     <TextView
         android:id="@+id/tv"

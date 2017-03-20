@@ -174,7 +174,6 @@ public class CriticsActivity extends AppCompatActivity {
 //        super.onCreateOptionsMenu(menu);
 //        menu.clear();
 //        getMenu.inflate(R.menu.menu_main, menu);
-////        获得菜单中的SearchView条目
 //        MenuItem searchItem = menu.findItem(R.id.item_search);
 ////        为searchItem绑定一个监听expand跟collapse状态的监听器
 //        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
