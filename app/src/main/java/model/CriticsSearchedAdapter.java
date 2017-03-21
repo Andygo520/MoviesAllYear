@@ -62,7 +62,7 @@ public class CriticsSearchedAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_critics_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.critics_item, parent, false);
             CriticsHolder holder = new CriticsHolder(view);
             //将创建的View注册点击事件
             view.setOnClickListener(this);

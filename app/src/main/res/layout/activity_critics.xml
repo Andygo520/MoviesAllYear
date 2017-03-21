@@ -1,69 +1,39 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar_critics_detail"/>
-
-    <EditText
-        android:id="@+id/et_name"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="3dp"
-        android:background="@null"
-        android:gravity="left|center_vertical"
-        android:hint="@string/hint_et_name"
-        android:textColor="@color/color_black"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/color_dark_grey"></View>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorBase"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/ToolbarTheme"></android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
+    <!--@string/appbar_scrolling_view_behavior是系统提供的，用来使滑动控件与AppBarLayout互动-->
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="center_vertical">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="你的评分："
-            android:textSize="15sp" />
-
-        <com.iarcuschin.simpleratingbar.SimpleRatingBar
-            android:id="@+id/ratingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srb_numberOfStars="5"
-            app:srb_starSize="30dp"
-            app:srb_stepSize="1"
-            />
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/et_content"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@null"
-        android:gravity="left"
-        android:hint="@string/hint_et_content"
-        android:padding="10dp"
-        android:textSize="15sp" />
-
-    <Button
-        android:id="@+id/btn_save_critics"
-        android:layout_width="match_parent"
+    <!--com.example.administrator.moviesallyear.behavior.MyFabBehavior是自定义的Behavior，
+      通过重写Behavior中关于嵌套滑动的两个回调完成FloatingActionButton的隐藏和显示判断及操作-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/button_bg"
-        android:gravity="center"
-        android:text="保存"
-        android:textColor="@color/color_white" />
-</LinearLayout>
+        android:layout_gravity="bottom|right"
+        android:layout_margin="10dp"
+        android:background="@color/colorBase"
+        android:src="@mipmap/add"
+        app:layout_behavior="com.example.administrator.moviesallyear.behavior.MyFabBehavior"
+        />
+
+</android.support.design.widget.CoordinatorLayout>

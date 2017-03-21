@@ -53,7 +53,7 @@ public class WriteCriticsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_critics);
+        setContentView(R.layout.activity_write_critics);
         ButterKnife.bind(this);
 
         ivEdit.setVisibility(View.GONE);

@@ -13,5 +13,5 @@
         android:padding="3dp"
         />
 
-    <include layout="@layout/list_critics_item"></include>
+    <include layout="@layout/critics_item"></include>
 </LinearLayout>

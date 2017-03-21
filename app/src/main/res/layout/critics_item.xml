@@ -10,13 +10,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_name"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            >
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_alignParentLeft="true"
+                />
+            <ImageView
+                android:id="@+id/iv_douban"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/douban"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/tv_content"

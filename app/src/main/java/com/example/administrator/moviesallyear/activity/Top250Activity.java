@@ -1,15 +1,13 @@
 package com.example.administrator.moviesallyear.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -20,18 +18,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import helper.UrlHelper;
 import model.MovieItem;
-import model.Result;
 import model.Top250Adapter;
 import model.Top250Movie;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class Top250Activity extends AppCompatActivity {
-
+    private CompositeSubscription mCompositeSubscription;
     @BindView(R.id.recyclerView)
     XRecyclerView recyclerView;
-    private List<MovieItem> data = new ArrayList<>();
+    private List<Top250Movie.SubjectsBean> data = new ArrayList<>();
     private List<MovieItem> movieList = new ArrayList<>();
     private int start = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,45 +52,55 @@ public class Top250Activity extends AppCompatActivity {
 
             @Override
             public void onLoadMore() {
-                start+=10;
-                getTop250(url);
+                start += 10;
+//                getTop250(url);
 
             }
         });
-        getTop250(url);
+        loadData();
     }
 
-    private void getTop250(final String url) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RequestQueue queue = Volley.newRequestQueue(Top250Activity.this);
-                StringRequest request = new StringRequest(url, new Response.Listener<String>() {
+    private void loadData() {
+        // @formatter:off
+        Subscription s = QuanysFactory.getDoubanSingleton().getMovieTop250(0, 10)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Top250Movie>() {
                     @Override
-                    public void onResponse(String s) {
-                        Result result = JSON.parseObject(s, Result.class);
-                        List<Top250Movie> list = JSON.parseArray(result.getSubjects().toString(), Top250Movie.class);
+                    public void onCompleted() {
 
-                        for (Top250Movie top250Movie : list) {
-                            String title = top250Movie.getTitle();
-                            String imageUrl = top250Movie.getImages().getLarge();
-                            double rating = top250Movie.getRating().getAverage();
-                            data.add(new MovieItem(title, rating, imageUrl));
-                        }
-                        if (result.getStart() > 0) {
-                            movieList.addAll(data);
-                            recyclerView.setAdapter(new Top250Adapter(Top250Activity.this, movieList, R.layout.list_item_250));
-                        } else
-                            recyclerView.setAdapter(new Top250Adapter(Top250Activity.this, data, R.layout.list_item_250));
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
 
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Top250Movie top250Movie) {
+                        Toast.makeText(Top250Activity.this, "success", Toast.LENGTH_SHORT).show();
+                        data.addAll(top250Movie.getSubjects());
+                        recyclerView.setAdapter(new Top250Adapter(Top250Activity.this, data, R.layout.item_250));
                     }
                 });
-                queue.add(request);
-            }
-        }).start();
+
+        addSubscription(s);
+    }
+
+    public void addSubscription(Subscription s) {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+
+        this.mCompositeSubscription.add(s);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode==KeyEvent.KEYCODE_BACK){
+            startActivity(new Intent(Top250Activity.this,MainActivity.class));
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

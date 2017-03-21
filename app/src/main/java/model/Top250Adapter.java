@@ -1,11 +1,12 @@
 package model;
 
 import android.content.Context;
-import android.widget.ImageView;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.example.administrator.moviesallyear.R;
+import com.example.administrator.moviesallyear.widget.RatioImageView;
 
 import org.byteam.superadapter.SuperAdapter;
 import org.byteam.superadapter.SuperViewHolder;
@@ -16,24 +17,29 @@ import java.util.List;
  * Created by Administrator on 2017/3/14.
  */
 
-public class Top250Adapter extends SuperAdapter<MovieItem> {
-    public Top250Adapter(Context context, List<MovieItem> items, int layoutResId) {
+public class Top250Adapter extends SuperAdapter<Top250Movie.SubjectsBean> {
+    public Top250Adapter(Context context, List<Top250Movie.SubjectsBean> items, int layoutResId) {
         super(context, items, layoutResId);
     }
 
     @Override
-    public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, MovieItem item) {
-        holder.setText(R.id.tv, item.getTitle()+"  "+item.getRating());
-        ImageView imageView = holder.findViewById(R.id.iv);
+    public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, Top250Movie.SubjectsBean item) {
+        holder.setText(R.id.tv, item.getTitle()+"  "+item.getRating().getAverage());
+        RatioImageView imageView = holder.findViewById(R.id.iv);
+        imageView.setOriginalSize(50,50);  //设置图片初始长宽
+        final View movie = holder.findViewById(R.id.movie_card);
         Glide.with(getContext())
-                .load(item.getImageUrl())
-                .centerCrop()
+                .load(item.getImages().getLarge())
+                .fitCenter()
                 .into(imageView)
                 .getSize(new SizeReadyCallback() {
                     @Override
                     public void onSizeReady(int width, int height) {
-
+                        if (!movie.isShown()){
+                            movie.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
+
     }
 }

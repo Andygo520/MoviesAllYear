@@ -57,7 +57,7 @@ public class CriticsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_critics2);
+        setContentView(R.layout.activity_critics);
         ButterKnife.bind(this);
         init();
     }
