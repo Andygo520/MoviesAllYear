@@ -1,14 +1,21 @@
 package model;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
+import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
@@ -19,6 +26,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by Administrator on 2NormalCriticsDateCritics6/DateCritics2/3NormalCritics.
@@ -31,6 +43,7 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
     private final int NormalCriticsFlag = 0;// 普通影评的标志
     private final int DateCriticsFlag = 1;//带日期影评标志
+    private CompositeSubscription mCompositeSubscription;
 
 
     public static interface OnRecyclerViewItemClickListener {
@@ -100,7 +113,7 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         //将数据与item视图进行绑定
         if (holder instanceof NormalCriticsHolder) {
             ((NormalCriticsHolder) holder).tvName.setText(movieList.get(position).getName());
@@ -108,6 +121,20 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((NormalCriticsHolder) holder).tvTime.setText(movieList.get(position).getCreateTime().substring(5, 16));//只显示月-日 时：分字段
             ((NormalCriticsHolder) holder).ratingBar.setRating(movieList.get(position).getStars());
             ((NormalCriticsHolder) holder).ratingBar.setIndicator(true);// 列表不能修改评分
+
+            ((NormalCriticsHolder) holder).name=movieList.get(position).getName();
+            //            有网络就显示亮图标
+            if (isNetAvailable())
+                ((NormalCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban_net));
+            else
+                ((NormalCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban));
+
+            ((NormalCriticsHolder) holder).ivDouban.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                     showDialog( ((NormalCriticsHolder) holder).name);
+                }
+            });
 
         } else if (holder instanceof DateCriticsHolder) {
 
@@ -121,6 +148,21 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((DateCriticsHolder) holder).tvTime.setText(movieList.get(position).getCreateTime().substring(5, 16));
             ((DateCriticsHolder) holder).ratingBar.setRating(movieList.get(position).getStars());
             ((DateCriticsHolder) holder).ratingBar.setIndicator(true);// 列表不能修改评分
+            ((DateCriticsHolder) holder).name=movieList.get(position).getName();
+
+//            有网络就显示亮图标
+            if (isNetAvailable())
+                ((DateCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban_net));
+            else
+                ((DateCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban));
+
+            ((DateCriticsHolder) holder).ivDouban.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDialog( ((DateCriticsHolder) holder).name);
+                }
+            });
+
         }
 
     }
@@ -143,6 +185,8 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         SimpleRatingBar ratingBar;
         @BindView(R.id.iv_douban)
         ImageView ivDouban;
+
+        String name;
 
         public NormalCriticsHolder(View itemView) {
             super(itemView);
@@ -170,6 +214,7 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         SimpleRatingBar ratingBar;
         @BindView(R.id.iv_douban)
         ImageView ivDouban;
+        String name;
 
         public DateCriticsHolder(View view) {
             super(view);
@@ -181,5 +226,62 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void onClick(View view) {
 
         }
+    }
+
+   private void showDialog(String query){
+
+       Subscription s= QuanysFactory.getDoubanSingleton().getSearchedMovie(query)
+                      .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                   .subscribe(new Observer<Top250Movie>() {
+                       @Override
+                       public void onCompleted() {
+
+                       }
+
+                       @Override
+                       public void onError(Throwable e) {
+
+                       }
+
+                       @Override
+                       public void onNext(Top250Movie top250Movie) {
+                           Toast.makeText(context,"success",Toast.LENGTH_SHORT).show();
+
+                           BottomSheetDialog dialog=new BottomSheetDialog(context);
+                           View view=LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog,null);
+                           ListView listView= (ListView) view.findViewById(R.id.list);
+                           listView.setAdapter(new DialogAdapter(context,top250Movie.getSubjects().subList(0,6),R.layout.dialog_item));
+                           listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                               @Override
+                               public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                               }
+                           });
+                           dialog.setContentView(view);
+                           dialog.show();
+                       }
+                   });
+
+       addSubscription(s);
+   }
+
+    public void addSubscription(Subscription s) {
+        if (this.mCompositeSubscription == null) {
+            this.mCompositeSubscription = new CompositeSubscription();
+        }
+
+        this.mCompositeSubscription.add(s);
+    }
+
+    public boolean isNetAvailable(){
+        ConnectivityManager connectivityManager= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo=connectivityManager.getActiveNetworkInfo();
+        if (networkInfo==null){
+            return false;
+        }else
+            return true;
+
     }
 }

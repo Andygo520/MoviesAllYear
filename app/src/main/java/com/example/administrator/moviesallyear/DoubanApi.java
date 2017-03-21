@@ -36,5 +36,12 @@ public interface DoubanApi {
     @GET("v2/movie/subject/{id}")
     Observable<Movie> getMovieDetail(@Path("id") String id);
 
+    /**
+     * 获取查询电影
+     *
+     * @param query 搜索内容
+     */
+    @GET("v2/movie/search")
+    Observable<Top250Movie> getSearchedMovie(@Query("q") String query);
 
 }
