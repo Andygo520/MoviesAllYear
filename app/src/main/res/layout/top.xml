@@ -54,16 +54,7 @@
             android:layout_marginRight="10dp"
             android:visibility="gone"
             />
-        <ImageView
-            android:id="@+id/iv_save"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/save"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:visibility="gone"
-            />
+
         <ImageView
             android:id="@+id/iv_share"
             android:layout_width="30dp"
@@ -79,7 +70,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:src="@mipmap/search_white"
+            android:src="@mipmap/search"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:visibility="gone"

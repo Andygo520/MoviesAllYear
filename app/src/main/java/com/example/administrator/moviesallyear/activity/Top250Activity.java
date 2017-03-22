@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import helper.UrlHelper;
 import model.MovieItem;
-import model.Top250Adapter;
+import com.example.administrator.moviesallyear.adapter.Top250Adapter;
 import model.Top250Movie;
 import rx.Observer;
 import rx.Subscription;

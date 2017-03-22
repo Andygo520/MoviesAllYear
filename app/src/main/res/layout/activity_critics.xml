@@ -11,13 +11,15 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorBase"
+            android:background="@color/color_white"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:theme="@style/ToolbarTheme"></android.support.v7.widget.Toolbar>
+            app:theme="@style/ToolbarTheme">
+
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <!--@string/appbar_scrolling_view_behavior是系统提供的，用来使滑动控件与AppBarLayout互动-->
-    <com.jcodecraeer.xrecyclerview.XRecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +35,6 @@
         android:layout_margin="10dp"
         android:background="@color/colorBase"
         android:src="@mipmap/add"
-        app:layout_behavior="com.example.administrator.moviesallyear.behavior.MyFabBehavior"
-        />
+        app:layout_behavior="com.example.administrator.moviesallyear.behavior.MyFabBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

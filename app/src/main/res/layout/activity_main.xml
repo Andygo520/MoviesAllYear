@@ -1,11 +1,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
         android:divider="@drawable/divider"
         android:orientation="vertical"
         android:showDividers="middle">
@@ -42,17 +43,34 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-            <TextView
-                android:id="@+id/tvCritics"
+            android:layout_height="200dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            >
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:orientation="vertical"
                 android:background="@drawable/linear_bg"
-                android:padding="3dp"
-                android:ellipsize="end"
-                android:textSize="17sp" />
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/critics"
+                    android:textColor="@color/colorBase"
+                    android:textSize="17sp"
+                    android:padding="3dp"/>
+                <com.tomer.fadingtextview.FadingTextView
+                    android:id="@+id/tvCritics"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="3dp"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="0dp"

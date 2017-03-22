@@ -1,4 +1,4 @@
-package model;
+package com.example.administrator.moviesallyear.adapter;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -26,6 +26,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import model.MovieCritics;
+import model.Top250Movie;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,7 +52,6 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onItemClick(View view, int position);
 
         void onItemLongClick(View view, int positon);
-
     }
 
     public CriticsAdapter(List<MovieCritics> movieList, Context context) {
@@ -125,9 +126,9 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((NormalCriticsHolder) holder).name=movieList.get(position).getName();
             //            有网络就显示亮图标
             if (isNetAvailable())
-                ((NormalCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban_net));
+                ((NormalCriticsHolder) holder).ivDouban.setImageResource(R.mipmap.douban_net);
             else
-                ((NormalCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban));
+                ((NormalCriticsHolder) holder).ivDouban.setImageResource(R.mipmap.douban);
 
             ((NormalCriticsHolder) holder).ivDouban.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -152,9 +153,9 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 //            有网络就显示亮图标
             if (isNetAvailable())
-                ((DateCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban_net));
+                ((DateCriticsHolder) holder).ivDouban.setImageResource(R.mipmap.douban_net);
             else
-                ((DateCriticsHolder) holder).ivDouban.setImageDrawable(context.getDrawable(R.mipmap.douban));
+                ((DateCriticsHolder) holder).ivDouban.setImageResource(R.mipmap.douban);
 
             ((DateCriticsHolder) holder).ivDouban.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -282,6 +283,5 @@ public class CriticsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return false;
         }else
             return true;
-
     }
 }

@@ -44,8 +44,8 @@ import butterknife.OnClick;
 import helper.OnRecyclerItemClickListener;
 import helper.ShareHelper;
 import helper.SnackbarHelper;
-import model.CriticsAdapter;
-import model.CriticsSearchedAdapter;
+import com.example.administrator.moviesallyear.adapter.CriticsAdapter;
+import com.example.administrator.moviesallyear.adapter.CriticsSearchedAdapter;
 import model.MovieCritics;
 
 /**

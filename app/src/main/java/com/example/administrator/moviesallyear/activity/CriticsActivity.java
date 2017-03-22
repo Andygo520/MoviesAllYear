@@ -1,25 +1,34 @@
 package com.example.administrator.moviesallyear.activity;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
+import com.example.administrator.moviesallyear.adapter.CriticsAdapter;
+import com.example.administrator.moviesallyear.adapter.CriticsAdapter1;
+import com.example.administrator.moviesallyear.adapter.CriticsSearchedAdapter;
 import com.greendao.gen.MovieCriticsDao;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
+import org.byteam.superadapter.IMulItemViewType;
+import org.byteam.superadapter.OnItemClickListener;
+import org.byteam.superadapter.OnItemLongClickListener;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.File;
@@ -29,8 +38,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import model.CriticsAdapter;
-import model.CriticsSearchedAdapter;
+import helper.ShareHelper;
+import helper.SnackbarHelper;
 import model.MovieCritics;
 
 public class CriticsActivity extends AppCompatActivity {
@@ -44,7 +53,7 @@ public class CriticsActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.recyclerView)
-    XRecyclerView recyclerView;
+    RecyclerView recyclerView;
     @BindView(R.id.fab_add)
     FloatingActionButton fabAdd;
 
@@ -57,7 +66,6 @@ public class CriticsActivity extends AppCompatActivity {
     }
 
     public void init() {
-
         setSupportActionBar(toolbar);
         toolbar.setTitle("");
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -83,8 +91,6 @@ public class CriticsActivity extends AppCompatActivity {
         });
         //        默认设置XRecyclerView不能下拉刷新以及上拉加载更多
         recyclerView.setLayoutManager(new LinearLayoutManager(CriticsActivity.this));
-        recyclerView.setPullRefreshEnabled(false);
-        recyclerView.setLoadingMoreEnabled(false);
         //        获取MovieCriticsDao对象
         criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
     }
@@ -158,8 +164,8 @@ public class CriticsActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-            startActivity(new Intent(CriticsActivity.this,MainActivity.class));
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            startActivity(new Intent(CriticsActivity.this, MainActivity.class));
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -234,84 +240,107 @@ public class CriticsActivity extends AppCompatActivity {
             recyclerView.setAdapter(new CriticsSearchedAdapter(movieList, context));
 
         else if (type == 1) {
-            adapter = new CriticsAdapter(movieList, context);
-            recyclerView.setAdapter(adapter);
-        }
+            final CriticsAdapter1 adapter = new CriticsAdapter1(context, movieList, new IMulItemViewType<MovieCritics>() {
+                @Override
+                public int getViewTypeCount() {
+                    return 2;
+                }
 
-//        recyclerView.addOnItemTouchListener(new OnRecyclerItemClickListener(recyclerView) {
-//            @Override
-//            public void onLongClick(final RecyclerView.ViewHolder vh) {
-////              长按的时候给出震动提示
-//                Vibrator vibrator = (Vibrator) CriticsActivity.this.getSystemService(Context.VIBRATOR_SERVICE);
-//                vibrator.vibrate(1);
-//                final int position = vh.getLayoutPosition() - 1;
-//                Log.d("idididid", position + "");
-//                final MovieCritics movieCritics = movieList.get(position);
-//                final long id = movieCritics.getId();
-//                Log.d("idididid", id + "");
-//                final Dialog dialog = new AlertDialog.Builder(CriticsActivity.this)
-//                        .setItems(items, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                switch (i) {
-//                                    //     编辑
-//                                    case 0: {
-//                                        Intent intent = new Intent(CriticsActivity.this, WriteCriticsActivity.class);
-//                                        intent.putExtra("Flag", 999);// 修改影评的标志位
-//                                        intent.putExtra("id", id);
-//                                        startActivity(intent);
-//                                        break;
-//                                    }
-//                                    //     删除
-//                                    case 1: {
-//                                        new AlertDialog.Builder(CriticsActivity.this)
-//                                                .setTitle("警告")
-//                                                .setMessage("删除后数据将无法恢复！\n\n确定删除吗？")
-//                                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-//                                                    @Override
-//                                                    public void onClick(DialogInterface dialogInterface, int i) {
-//                                                        dialogInterface.dismiss();
-//                                                    }
-//                                                })
-//                                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                                                    @Override
-//                                                    public void onClick(DialogInterface dialogInterface, int i) {
-//                                                        //删除position位置的数据，注意最后要通知position下面的条目位置要更新
-//                                                        movieList.remove(position);
-//                                                        adapter.notifyItemRemoved(position);
-//                                                        adapter.notifyItemRangeChanged(position, movieCriticsList.size() - position);
-//                                                        criticsDao.deleteByKey(id);//从数据库删除记录
-//                                                        //使用Snackbar进行提示
-//                                                        SnackbarHelper.ShortSnackbar(recyclerView, "删除成功", SnackbarHelper.Info).show();
-//                                                    }
-//                                                })
-//                                                .create()
-//                                                .show();
-//
-//                                        break;
-//                                    }
-//
-//                                    //     分享
-//                                    case 2: {
-//                                        ShareHelper.showShare(CriticsActivity.this, movieCritics);
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                        }).create();
-//                dialog.show();
-//            }
-//
-//            @Override
-//            public void onItemClick(RecyclerView.ViewHolder vh) {
-//                Intent intent = new Intent(context, CriticsDetailActivity.class);
-////                获得点击条目的位置
-//                int position = vh.getLayoutPosition() - 1;
-//                MovieCritics movieCritics = movieList.get(position);
-//                intent.putExtra("id", movieCritics.getId());
-//                startActivity(intent);
-//            }
-//        });
+                @Override
+                public int getItemViewType(int position, MovieCritics critics) {
+                    if (position == 0) {
+                        return 1;
+                    } else {
+//            获取影评创建日期的年月字段（长度为7）
+                        String date = movieList.get(position).getCreateTime().substring(0, 7);
+                        String date1 = movieList.get(position - 1).getCreateTime().substring(0, 7);
+                        return date.equals(date1) ? 0 : 1;
+                    }
+                }
+
+                @Override
+                public int getLayoutId(int viewType) {
+                    if (viewType == 0)
+                        return R.layout.critics_item;
+                    else
+                        return R.layout.critics_with_date_item;
+                }
+            });
+            recyclerView.setAdapter(adapter);
+            adapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View itemView, int viewType, int position) {
+                    Log.d("TAGG", position + "");
+                    Intent intent = new Intent(context, CriticsDetailActivity.class);
+                    MovieCritics movieCritics = movieList.get(position);
+                    intent.putExtra("id", movieCritics.getId());
+                    startActivity(intent);
+                }
+            });
+            adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public void onItemLongClick(View itemView, int viewType, final int position) {
+                                    //              长按的时候给出震动提示
+                Vibrator vibrator = (Vibrator) CriticsActivity.this.getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(1);
+                Log.d("TAGG", position + "");
+                final MovieCritics movieCritics = movieList.get(position);
+                final long id = movieCritics.getId();
+                Log.d("TAGG", id + "");
+                final Dialog dialog = new AlertDialog.Builder(CriticsActivity.this)
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                switch (i) {
+                                    //     编辑
+                                    case 0: {
+                                        Intent intent = new Intent(CriticsActivity.this, WriteCriticsActivity.class);
+                                        intent.putExtra("Flag", 999);// 修改影评的标志位
+                                        intent.putExtra("id", id);
+                                        startActivity(intent);
+                                        break;
+                                    }
+                                    //     删除
+                                    case 1: {
+                                        new AlertDialog.Builder(CriticsActivity.this)
+                                                .setTitle("警告")
+                                                .setMessage("删除后数据将无法恢复！\n\n确定删除吗？")
+                                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        dialogInterface.dismiss();
+                                                    }
+                                                })
+                                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        //删除position位置的数据，注意最后要通知position下面的条目位置要更新
+                                                        movieList.remove(position);
+                                                        adapter.notifyItemRemoved(position);
+                                                        adapter.notifyItemRangeChanged(position, movieCriticsList.size() - position);
+                                                        criticsDao.deleteByKey(id);//从数据库删除记录
+                                                        //使用Snackbar进行提示
+                                                        SnackbarHelper.ShortSnackbar(recyclerView, "删除成功", SnackbarHelper.Info).show();
+                                                    }
+                                                })
+                                                .create()
+                                                .show();
+
+                                        break;
+                                    }
+
+                                    //     分享
+                                    case 2: {
+                                        ShareHelper.showShare(CriticsActivity.this, movieCritics);
+                                        break;
+                                    }
+                                }
+                            }
+                        }).create();
+                dialog.show();
+            }
+        });
+        }
     }
 
     //    实现查找影评

@@ -1,4 +1,4 @@
-package model;
+package com.example.administrator.moviesallyear.adapter;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -11,6 +11,8 @@ import org.byteam.superadapter.SuperViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import model.MovieItem;
 
 /**
  * Created by Administrator on 2017/3/13.

@@ -1,4 +1,4 @@
-package model;
+package com.example.administrator.moviesallyear.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,8 @@ import com.example.administrator.moviesallyear.R;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
 import java.util.List;
+
+import model.MovieCritics;
 
 /**
  * Created by Administrator on 2017/1/16.

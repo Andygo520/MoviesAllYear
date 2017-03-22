@@ -43,7 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import helper.OnRecyclerItemClickListener;
 import helper.UrlHelper;
-import model.MovieAdapter;
+import com.example.administrator.moviesallyear.adapter.MovieAdapter;
 import model.MovieInSearch;
 import model.MovieItem;
 
