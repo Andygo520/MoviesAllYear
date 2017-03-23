@@ -21,6 +21,7 @@ import model.MovieCritics;
  */
 
 public class CriticsAdapter1 extends SuperAdapter<MovieCritics> {
+
     public CriticsAdapter1(Context context, List<MovieCritics> items, IMulItemViewType<MovieCritics> mulItemViewType) {
         super(context, items, mulItemViewType);
     }

@@ -9,8 +9,8 @@ android {
         applicationId "com.example.administrator.moviesallyear"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName '3.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
                 //  替换成你的qq_id
@@ -22,6 +22,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
@@ -69,7 +71,7 @@ dependencies {
     compile files('libs/ShareSDK-Wechat-2.8.0.jar')
     compile files('libs/ShareSDK-Wechat-Core-2.8.0.jar')
     compile files('libs/ShareSDK-Wechat-Moments-2.8.0.jar')
-   // 内存泄漏检测
+    // 内存泄漏检测
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
@@ -80,8 +82,7 @@ dependencies {
     //    引入万能适配器
     compile 'org.byteam.superadapter:superadapter:3.6.6'
     compile 'com.yarolegovich:discrete-scrollview:1.0.3'
-
-    compile ('com.squareup.retrofit2:retrofit:2.1.0') {
+    compile('com.squareup.retrofit2:retrofit:2.1.0') {
         exclude module: 'okhttp'
     }
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
@@ -90,5 +91,5 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'com.tomer:fadingtextview:1.8'
-    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.nex3z:flow-layout:0.1.3'
 }
