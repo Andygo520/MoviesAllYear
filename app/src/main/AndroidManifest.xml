@@ -14,7 +14,7 @@
     <!-- 蓝牙分享所需的权限 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name="com.MoviesAllYearApplication"
@@ -83,7 +83,12 @@
             android:name=".activity.Top250Activity"
             android:label="@string/title_activity_classic250"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.CriticsActivity"></activity>
+        <activity
+            android:name=".activity.CriticsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".webview.WebViewActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

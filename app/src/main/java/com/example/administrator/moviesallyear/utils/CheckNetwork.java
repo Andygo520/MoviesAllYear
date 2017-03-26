@@ -30,6 +30,8 @@ public class CheckNetwork {
             e.printStackTrace();
             return false;
         }
+
+
     }
 
     public static boolean isWifiConnected(Context context) {

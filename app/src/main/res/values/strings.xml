@@ -7,6 +7,11 @@
     <string name="hint_et_name">电影名</string>
     <string name="hint_et_content">影评内容···</string>
 
+    <string name="actionbar_webview_share">分享到</string>
+    <string name="actionbar_webview_cope">复制链接</string>
+    <string name="actionbar_webview_open">打开链接</string>
+    <string name="action_share">分享</string>
+    <string name="actionbar_share">分享给朋友\(^o^)/~</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_classic250">Classic250Activity</string>
     <string name="more_movies">更多</string>

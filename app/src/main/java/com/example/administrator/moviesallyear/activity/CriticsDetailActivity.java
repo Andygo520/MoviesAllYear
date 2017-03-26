@@ -35,8 +35,6 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
     Toolbar toolbar;
     @BindView(R.id.iv_back)
     ImageView ivBack;
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
     @BindView(R.id.iv_edit)
     ImageView ivEdit;
     @BindView(R.id.tv_name)
@@ -56,7 +54,6 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
 //        初始化ShareSDK操作
         ShareSDK.initSDK(CriticsDetailActivity.this);
 
-        tvTitle.setText("详情");
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -100,8 +97,6 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(CriticsDetailActivity.this, MainActivity.class);
-            startActivity(intent);
             finish();
             return true;
         }
@@ -112,8 +107,6 @@ public class CriticsDetailActivity extends AppCompatActivity implements SearchVi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                Intent intent1 = new Intent(CriticsDetailActivity.this, MainActivity.class);
-                startActivity(intent1);
                 finish();
                 break;
             case R.id.iv_edit:

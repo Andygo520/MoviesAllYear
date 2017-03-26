@@ -1,7 +1,6 @@
 package com.example.administrator.moviesallyear.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
@@ -43,8 +41,6 @@ public class WriteCriticsActivity extends AppCompatActivity {
     SimpleRatingBar ratingBar;
     @BindView(R.id.iv_back)
     ImageView ivBack;
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.iv_edit)
@@ -57,7 +53,6 @@ public class WriteCriticsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         ivEdit.setVisibility(View.GONE);
-        tvTitle.setText("写影评");
         context = WriteCriticsActivity.this;
 //       获得MovieCriticsDao对象
         criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
@@ -118,8 +113,7 @@ public class WriteCriticsActivity extends AppCompatActivity {
                     criticsDao.update(new MovieCritics(id, name, content, time, starNum));
                 else
                     criticsDao.insert(new MovieCritics(null, name, content, time, starNum));
-                Intent intent = new Intent(context, CriticsActivity.class);
-                startActivity(intent);
+
                 finish();
                 break;
         }

@@ -17,8 +17,11 @@ import com.bumptech.glide.Glide;
 import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.adapter.Top250Adapter;
+import com.example.administrator.moviesallyear.webview.WebViewActivity;
 import com.greendao.gen.MovieCriticsDao;
 import com.tomer.fadingtextview.FadingTextView;
+
+import org.byteam.superadapter.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         }
         tvCritics.setTimeout(10, SECONDS);//10秒切换一次显示内容
 
+        getHotMovies();//获取热映电影
         getBeauty();
-        getHotMovies();
     }
 
     private void getHotMovies() {
@@ -106,8 +109,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Top250Movie movie) {
                         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
-                        List<Top250Movie.SubjectsBean> movieList = movie.getSubjects().subList(0, 5);//只显示五条记录
-                        recyclerView.setAdapter(new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie));
+                        final List<Top250Movie.SubjectsBean> movieList = movie.getSubjects().subList(0, 5);//只显示五条记录
+                        Top250Adapter adapter = new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie);
+                        recyclerView.setAdapter(adapter);
+                        adapter.setOnItemClickListener(new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View itemView, int viewType, int position) {
+                                String url=movieList.get(position).getAlt();//取出电影网址url
+                                String title=movieList.get(position).getTitle();//取出电影名
+                                WebViewActivity.loadUrl(MainActivity.this,url,title);
+                            }
+                        });
                     }
                 });
         addSubscription(s);
@@ -166,13 +178,11 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.tvCritics:
                 startActivity(new Intent(MainActivity.this, CriticsActivity.class));
-                finish();
                 break;
             case R.id.llComingMovies:
                 break;
             case R.id.tvTop250:
                 startActivity(new Intent(MainActivity.this, Top250Activity.class));
-                finish();
                 break;
             case R.id.tvMore:
                 break;

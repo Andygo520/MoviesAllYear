@@ -3,9 +3,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.jcodecraeer.xrecyclerview.XRecyclerView
-        android:id="@+id/recyclerView"
+    <com.fingdo.statelayout.StateLayout xmlns:sl="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/state_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        sl:emptyImg="@drawable/ic_state_empty"
+        sl:emptyText="Empty"
+        sl:errorImg="@drawable/ic_state_error"
+        sl:errorText="Error"
+        sl:loadingText="Loading..."
+        sl:loginImg="@drawable/ic_state_login"
+        sl:loginText="Sign in"
+        sl:noNetworkImg="@drawable/ic_state_no_network"
+        sl:noNetworkText="No Network"
+        sl:timeOutImg="@drawable/ic_state_time_out"
+        sl:timeOutText="Timeout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.jcodecraeer.xrecyclerview.XRecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </com.fingdo.statelayout.StateLayout>
+
 
 </LinearLayout>

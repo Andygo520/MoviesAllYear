@@ -1,24 +1,28 @@
 package com.example.administrator.moviesallyear.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.KeyEvent;
-import android.widget.Toast;
+import android.view.View;
 
 import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
+import com.example.administrator.moviesallyear.adapter.Top250Adapter;
+import com.example.administrator.moviesallyear.utils.CheckNetwork;
+import com.example.administrator.moviesallyear.webview.WebViewActivity;
+import com.fingdo.statelayout.StateLayout;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
+import org.byteam.superadapter.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import helper.UrlHelper;
 import model.MovieItem;
-import com.example.administrator.moviesallyear.adapter.Top250Adapter;
 import model.Top250Movie;
 import rx.Observer;
 import rx.Subscription;
@@ -30,8 +34,11 @@ public class Top250Activity extends AppCompatActivity {
     private CompositeSubscription mCompositeSubscription;
     @BindView(R.id.recyclerView)
     XRecyclerView recyclerView;
+    @BindView(R.id.state_layout)
+    StateLayout stateLayout;
     private List<Top250Movie.SubjectsBean> data = new ArrayList<>();
     private List<MovieItem> movieList = new ArrayList<>();
+    private Top250Adapter adapter;
     private int start = 0;
 
     @Override
@@ -40,7 +47,31 @@ public class Top250Activity extends AppCompatActivity {
         setContentView(R.layout.activity_top250);
         ButterKnife.bind(this);
 
-        final String url = UrlHelper.top250_url.replace("{start}", start + "");
+        if (!CheckNetwork.isNetworkConnected(Top250Activity.this))
+            stateLayout.showNoNetworkView();
+        else {
+            initRecyclerView();
+        }
+//       监听状态布局的刷新
+        stateLayout.setRefreshListener(new StateLayout.OnViewRefreshListener() {
+            @Override
+            public void refreshClick() {
+                if (CheckNetwork.isNetworkConnected(Top250Activity.this)) {
+                    stateLayout.showContentView();//显示布局内容
+                    initRecyclerView();
+                }
+            }
+
+            @Override
+            public void loginClick() {
+
+            }
+        });
+
+    }
+
+
+    private void initRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(Top250Activity.this));
         recyclerView.setPullRefreshEnabled(false);
         recyclerView.setLoadingMoreEnabled(true);
@@ -53,16 +84,36 @@ public class Top250Activity extends AppCompatActivity {
             @Override
             public void onLoadMore() {
                 start += 10;
-//                getTop250(url);
+//                loadData(start);
+//                recyclerView.loadMoreComplete();//to notify that the loading more work is done
+                if (start <140) {
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            loadData(start);
+                            recyclerView.loadMoreComplete();
+                            adapter.notifyDataSetChanged();
+                        }
+                    }, 1000);
+                }else if (start == 140){
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            loadData(start);
+                            recyclerView.noMoreLoading();
+                            adapter.notifyDataSetChanged();
+                        }
+                    }, 1000);
+                }
 
             }
         });
-        loadData();
+        loadData(0);
+
     }
 
-    private void loadData() {
+
+    private void loadData(final int start) {
         // @formatter:off
-        Subscription s = QuanysFactory.getDoubanSingleton().getMovieTop250(0, 10)
+        Subscription s = QuanysFactory.getDoubanSingleton().getMovieTop250(start, 10)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Top250Movie>() {
@@ -78,9 +129,20 @@ public class Top250Activity extends AppCompatActivity {
 
                     @Override
                     public void onNext(Top250Movie top250Movie) {
-                        Toast.makeText(Top250Activity.this, "success", Toast.LENGTH_SHORT).show();
                         data.addAll(top250Movie.getSubjects());
-                        recyclerView.setAdapter(new Top250Adapter(Top250Activity.this, data, R.layout.item_250));
+                        if (start==0){
+                            adapter = new Top250Adapter(Top250Activity.this, data, R.layout.item_250);
+                            recyclerView.setAdapter(adapter);
+                        }
+                        adapter.setOnItemClickListener(new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View itemView, int viewType, int position) {
+                                String url = data.get(position - 1).getAlt();
+                                String name = data.get(position - 1).getTitle();
+                                WebViewActivity.loadUrl(Top250Activity.this, url, name);
+                            }
+                        });
+
                     }
                 });
 
@@ -97,8 +159,8 @@ public class Top250Activity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-            startActivity(new Intent(Top250Activity.this,MainActivity.class));
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
             return true;
         }
         return super.onKeyDown(keyCode, event);
