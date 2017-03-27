@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
@@ -60,7 +61,10 @@ public class CriticsAdapter1 extends SuperAdapter<MovieCritics> {
         ivDouban.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog(item.getName());//根据电影名，查找相应的电影，显示一个bottomsheetdialog
+                if (CheckNetwork.isNetworkConnected(getContext()))
+                    showDialog(item.getName());//根据电影名，查找相应的电影，显示一个bottomsheetdialog
+                else
+                    Toast.makeText(getContext(), R.string.check_net, Toast.LENGTH_SHORT).show();
             }
         });
         switch (viewType) {
@@ -93,20 +97,25 @@ public class CriticsAdapter1 extends SuperAdapter<MovieCritics> {
                         final BottomSheetDialog dialog = new BottomSheetDialog(context);
                         View view = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_dialog, null);
                         ListView listView = (ListView) view.findViewById(R.id.list);
-//                        只显示六条数据
-                        final List<Top250Movie.SubjectsBean> data = top250Movie.getSubjects().subList(0, 6);
-                        listView.setAdapter(new DialogAdapter(context, data, R.layout.dialog_item));
-                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                String url = data.get(i).getAlt();
-                                String name = data.get(i).getTitle();
-                                WebViewActivity.loadUrl(context, url, name);
-                                dialog.dismiss();
-                            }
-                        });
-                        dialog.setContentView(view);
-                        dialog.show();
+                        List<Top250Movie.SubjectsBean> list=  top250Movie.getSubjects();
+                        if (list.size()==0){
+                            Toast.makeText(getContext(), R.string.no_item, Toast.LENGTH_SHORT).show();
+                        }else{
+ //                        只显示六条数据
+                            final List<Top250Movie.SubjectsBean> data = list.subList(0, 6);
+                            listView.setAdapter(new DialogAdapter(context, data, R.layout.dialog_item));
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    String url = data.get(i).getAlt();
+                                    String name = data.get(i).getTitle();
+                                    WebViewActivity.loadUrl(context, url, name);
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.setContentView(view);
+                            dialog.show();
+                        }
                     }
                 });
 

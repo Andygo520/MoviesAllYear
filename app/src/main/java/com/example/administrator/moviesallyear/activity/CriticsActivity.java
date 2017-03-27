@@ -280,66 +280,66 @@ public class CriticsActivity extends AppCompatActivity {
             adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public void onItemLongClick(View itemView, int viewType, final int position) {
-                                    //              长按的时候给出震动提示
-                Vibrator vibrator = (Vibrator) CriticsActivity.this.getSystemService(Context.VIBRATOR_SERVICE);
-                vibrator.vibrate(1);
-                Log.d("TAGG", position + "");
-                final MovieCritics movieCritics = movieList.get(position);
-                final long id = movieCritics.getId();
-                Log.d("TAGG", id + "");
-                final Dialog dialog = new AlertDialog.Builder(CriticsActivity.this)
-                        .setItems(items, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                switch (i) {
-                                    //     编辑
-                                    case 0: {
-                                        Intent intent = new Intent(CriticsActivity.this, WriteCriticsActivity.class);
-                                        intent.putExtra("Flag", 999);// 修改影评的标志位
-                                        intent.putExtra("id", id);
-                                        startActivity(intent);
-                                        break;
-                                    }
-                                    //     删除
-                                    case 1: {
-                                        new AlertDialog.Builder(CriticsActivity.this)
-                                                .setTitle("警告")
-                                                .setMessage("删除后数据将无法恢复！\n\n确定删除吗？")
-                                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        dialogInterface.dismiss();
-                                                    }
-                                                })
-                                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        //删除position位置的数据，注意最后要通知position下面的条目位置要更新
-                                                        movieList.remove(position);
-                                                        adapter.notifyItemRemoved(position);
-                                                        adapter.notifyItemRangeChanged(position, movieCriticsList.size() - position);
-                                                        criticsDao.deleteByKey(id);//从数据库删除记录
-                                                        //使用Snackbar进行提示
-                                                        SnackbarHelper.ShortSnackbar(recyclerView, "删除成功", SnackbarHelper.Info).show();
-                                                    }
-                                                })
-                                                .create()
-                                                .show();
+                    //              长按的时候给出震动提示
+                    Vibrator vibrator = (Vibrator) CriticsActivity.this.getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(1);
+                    Log.d("TAGG", position + "");
+                    final MovieCritics movieCritics = movieList.get(position);
+                    final long id = movieCritics.getId();
+                    Log.d("TAGG", id + "");
+                    final Dialog dialog = new AlertDialog.Builder(CriticsActivity.this)
+                            .setItems(items, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    switch (i) {
+                                        //     编辑
+                                        case 0: {
+                                            Intent intent = new Intent(CriticsActivity.this, WriteCriticsActivity.class);
+                                            intent.putExtra("Flag", 999);// 修改影评的标志位
+                                            intent.putExtra("id", id);
+                                            startActivity(intent);
+                                            break;
+                                        }
+                                        //     删除
+                                        case 1: {
+                                            new AlertDialog.Builder(CriticsActivity.this)
+                                                    .setTitle("警告")
+                                                    .setMessage("删除后数据将无法恢复！\n\n确定删除吗？")
+                                                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            dialogInterface.dismiss();
+                                                        }
+                                                    })
+                                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            //删除position位置的数据，注意最后要通知position下面的条目位置要更新
+                                                            movieList.remove(position);
+                                                            adapter.notifyItemRemoved(position);
+                                                            adapter.notifyItemRangeChanged(position, movieCriticsList.size() - position);
+                                                            criticsDao.deleteByKey(id);//从数据库删除记录
+                                                            //使用Snackbar进行提示
+                                                            SnackbarHelper.ShortSnackbar(recyclerView, "删除成功", SnackbarHelper.Info).show();
+                                                        }
+                                                    })
+                                                    .create()
+                                                    .show();
 
-                                        break;
-                                    }
+                                            break;
+                                        }
 
-                                    //     分享
-                                    case 2: {
-                                        ShareHelper.showShare(CriticsActivity.this, movieCritics);
-                                        break;
+                                        //     分享
+                                        case 2: {
+                                            ShareHelper.showShare(CriticsActivity.this, movieCritics);
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                        }).create();
-                dialog.show();
-            }
-        });
+                            }).create();
+                    dialog.show();
+                }
+            });
         }
     }
 

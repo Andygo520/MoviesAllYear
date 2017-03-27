@@ -20,4 +20,6 @@
     <string name="top250">豆瓣Top250</string>
     <string name="critics">我的影评</string>
     <string name="quit_app">再按一次退出程序</string>
+    <string name="check_net">请检查网络连接</string>
+    <string name="no_item">未搜索到该电影名条目</string>
 </resources>

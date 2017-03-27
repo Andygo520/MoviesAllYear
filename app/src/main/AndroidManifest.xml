@@ -85,10 +85,13 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.CriticsActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".webview.WebViewActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.BeautyActivity" />
+        <activity android:name=".activity.HotMoviesActivity" />
+        <activity android:name=".activity.ComingMoviesActivity"></activity>
     </application>
 
 </manifest>
