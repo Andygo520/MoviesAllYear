@@ -91,7 +91,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.BeautyActivity" />
         <activity android:name=".activity.HotMoviesActivity" />
-        <activity android:name=".activity.ComingMoviesActivity"></activity>
+        <activity android:name=".activity.ComingMoviesActivity" />
+        <activity android:name=".activity.SearchActivity"></activity>
     </application>
 
 </manifest>

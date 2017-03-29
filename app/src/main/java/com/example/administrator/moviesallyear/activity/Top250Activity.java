@@ -2,13 +2,15 @@ package com.example.administrator.moviesallyear.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 
 import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
+import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
 import com.example.administrator.moviesallyear.adapter.Top250Adapter;
 import com.example.administrator.moviesallyear.utils.CheckNetwork;
 import com.example.administrator.moviesallyear.webview.WebViewActivity;
@@ -28,10 +30,12 @@ import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
-public class Top250Activity extends AppCompatActivity {
-    private CompositeSubscription mCompositeSubscription;
+public class Top250Activity extends ToolbarActivity {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
     @BindView(R.id.recyclerView)
     XRecyclerView recyclerView;
     @BindView(R.id.state_layout)
@@ -42,11 +46,23 @@ public class Top250Activity extends AppCompatActivity {
     private int start = 0;
 
     @Override
+    protected int provideContentViewId() {
+        return R.layout.activity_top250;
+    }
+
+    @Override
+    public void onToolbarClick() {
+        recyclerView.scrollToPosition(0);
+    }
+
+    @Override public boolean canBack() {
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_top250);
         ButterKnife.bind(this);
-
         if (!CheckNetwork.isNetworkConnected(Top250Activity.this))
             stateLayout.showNoNetworkView();
         else {
@@ -67,7 +83,6 @@ public class Top250Activity extends AppCompatActivity {
 
             }
         });
-
     }
 
 
@@ -86,7 +101,7 @@ public class Top250Activity extends AppCompatActivity {
                 start += 10;
 //                loadData(start);
 //                recyclerView.loadMoreComplete();//to notify that the loading more work is done
-                if (start <140) {
+                if (start < 140) {
                     new Handler().postDelayed(new Runnable() {
                         public void run() {
                             loadData(start);
@@ -94,7 +109,7 @@ public class Top250Activity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                         }
                     }, 1000);
-                }else if (start == 140){
+                } else if (start == 140) {
                     new Handler().postDelayed(new Runnable() {
                         public void run() {
                             loadData(start);
@@ -130,7 +145,7 @@ public class Top250Activity extends AppCompatActivity {
                     @Override
                     public void onNext(Top250Movie top250Movie) {
                         data.addAll(top250Movie.getSubjects());
-                        if (start==0){
+                        if (start == 0) {
                             adapter = new Top250Adapter(Top250Activity.this, data, R.layout.item_250);
                             recyclerView.setAdapter(adapter);
                         }
@@ -147,14 +162,6 @@ public class Top250Activity extends AppCompatActivity {
                 });
 
         addSubscription(s);
-    }
-
-    public void addSubscription(Subscription s) {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-
-        this.mCompositeSubscription.add(s);
     }
 
     @Override

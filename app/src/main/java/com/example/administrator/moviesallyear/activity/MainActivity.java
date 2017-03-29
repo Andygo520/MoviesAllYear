@@ -2,10 +2,15 @@ package com.example.administrator.moviesallyear.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +21,7 @@ import com.MoviesAllYearApplication;
 import com.bumptech.glide.Glide;
 import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
+import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
 import com.example.administrator.moviesallyear.adapter.Top250Adapter;
 import com.example.administrator.moviesallyear.webview.WebViewActivity;
 import com.greendao.gen.MovieCriticsDao;
@@ -36,15 +42,18 @@ import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 import static com.tomer.fadingtextview.FadingTextView.SECONDS;
 
-public class MainActivity extends AppCompatActivity {
-    private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
-    private CompositeSubscription mCompositeSubscription;
-    private long currentTime = 0;
+public class MainActivity extends ToolbarActivity {
 
+    private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
+    private long currentTime = 0;
+    private Handler handler = new Handler();
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.tvCritics)
@@ -59,14 +68,21 @@ public class MainActivity extends AppCompatActivity {
     ImageView ivBeauty;
 
     @Override
+    protected int provideContentViewId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
     }
 
     private void init() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(false);//不显示箭头
         //        获取MovieCriticsDao对象
         criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
 
@@ -87,6 +103,19 @@ public class MainActivity extends AppCompatActivity {
         }
         tvCritics.setTimeout(10, SECONDS);//10秒切换一次显示内容
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getHotMovies();//获取热映电影
+                        getBeauty();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000);
+            }
+        });
         getHotMovies();//获取热映电影
         getBeauty();
     }
@@ -115,9 +144,9 @@ public class MainActivity extends AppCompatActivity {
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(View itemView, int viewType, int position) {
-                                String url=movieList.get(position).getAlt();//取出电影网址url
-                                String title=movieList.get(position).getTitle();//取出电影名
-                                WebViewActivity.loadUrl(MainActivity.this,url,title);
+                                String url = movieList.get(position).getAlt();//取出电影网址url
+                                String title = movieList.get(position).getTitle();//取出电影名
+                                WebViewActivity.loadUrl(MainActivity.this, url, title);
                             }
                         });
                     }
@@ -151,14 +180,6 @@ public class MainActivity extends AppCompatActivity {
         addSubscription(s);
     }
 
-    public void addSubscription(Subscription s) {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-
-        this.mCompositeSubscription.add(s);
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -171,6 +192,22 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_search:
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @OnClick({R.id.tvCritics, R.id.llComingMovies, R.id.tvTop250, R.id.tvMore, R.id.ivBeauty})

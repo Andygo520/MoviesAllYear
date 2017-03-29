@@ -5,18 +5,5 @@
         android:id="@+id/item_search"
         android:icon="@mipmap/search"
         android:title="查找"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom|collapseActionView" />
-    <item
-        android:id="@+id/item_order_time"
-        android:title="按时间排序"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/item_order_stars"
-        android:title="按评分排序"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/item_output_critics"
-        android:title="导出到本地"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 </menu>
