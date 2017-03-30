@@ -24,6 +24,7 @@ import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
 import com.example.administrator.moviesallyear.adapter.Top250Adapter;
 import com.example.administrator.moviesallyear.webview.WebViewActivity;
+import com.example.administrator.moviesallyear.widget.BadgeFloatingActionButton;
 import com.greendao.gen.MovieCriticsDao;
 import com.tomer.fadingtextview.FadingTextView;
 
@@ -47,6 +48,8 @@ import static com.tomer.fadingtextview.FadingTextView.SECONDS;
 
 public class MainActivity extends ToolbarActivity {
 
+    @BindView(R.id.badgeButton)
+    BadgeFloatingActionButton badgeButton;
     private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
     private long currentTime = 0;
     private Handler handler = new Handler();
@@ -81,6 +84,7 @@ public class MainActivity extends ToolbarActivity {
 
     private void init() {
         ActionBar actionBar = getSupportActionBar();
+        badgeButton.showTextBadge("8");
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(false);//不显示箭头
         //        获取MovieCriticsDao对象
@@ -210,7 +214,7 @@ public class MainActivity extends ToolbarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.tvCritics, R.id.llComingMovies, R.id.tvTop250, R.id.tvMore, R.id.ivBeauty})
+    @OnClick({R.id.tvCritics, R.id.llComingMovies, R.id.tvTop250, R.id.tvMore, R.id.ivBeauty, R.id.badgeButton})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvCritics:
@@ -225,6 +229,10 @@ public class MainActivity extends ToolbarActivity {
                 break;
             case R.id.ivBeauty:
                 break;
+            case R.id.badgeButton:
+                startActivity(new Intent(MainActivity.this, MyMovieListActivity.class));
+                break;
+
         }
     }
 }
