@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,7 @@ import static com.example.administrator.moviesallyear.R.id.date;
 public class MoviesWannaWatchFragment extends Fragment {
     private List<MoviesWannaWatch> data = new ArrayList<>();
     private MoviesWannaWatchDao wannaWatchDao;
+    private WannaWatchAdapter adapter;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -60,10 +60,10 @@ public class MoviesWannaWatchFragment extends Fragment {
     private void init() {
         //        得到一个dao对象，用来操作数据库
         wannaWatchDao = MoviesAllYearApplication.getInstances().getDaoSession().getMoviesWannaWatchDao();
-        Log.d("wannaWatchDao", wannaWatchDao.toString());
-        data = wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Date.eq(false)).list();
+        data = wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Watched.eq(false)).list();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new WannaWatchAdapter(getActivity(), data, R.layout.item_movies_wanna_watch));
+        adapter=new WannaWatchAdapter(getActivity(), data, R.layout.item_movies_wanna_watch);
+        recyclerView.setAdapter(adapter);
     }
 
     class WannaWatchAdapter extends SuperAdapter<MoviesWannaWatch> {
@@ -84,7 +84,9 @@ public class MoviesWannaWatchFragment extends Fragment {
                         long time = System.currentTimeMillis();
                         Date date = new Date(time);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        wannaWatchDao.update(new MoviesWannaWatch(null, item.getName(), sdf.format(date), true));
+//                        更新数据的时候主键key不变
+                        wannaWatchDao.update(new MoviesWannaWatch(item.getId(), item.getName(), sdf.format(date), true));
+                        adapter.notifyDataSetChanged();
                     }
                 }
             });
