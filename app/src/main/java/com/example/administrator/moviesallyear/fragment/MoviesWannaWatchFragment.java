@@ -68,12 +68,13 @@ public class MoviesWannaWatchFragment extends Fragment {
 
     class WannaWatchAdapter extends SuperAdapter<MoviesWannaWatch> {
 
+        private List<MoviesWannaWatch> items=new ArrayList<>();
         public WannaWatchAdapter(Context context, List<MoviesWannaWatch> items, int layoutResId) {
             super(context, items, layoutResId);
         }
 
         @Override
-        public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, final MoviesWannaWatch item) {
+        public void onBind(SuperViewHolder holder, int viewType, final int layoutPosition, final MoviesWannaWatch item) {
             holder.setText(R.id.name, item.getName());
             holder.setText(date, item.getDate());
             CheckBox checkBox = holder.findViewById(R.id.checkBox);
@@ -86,6 +87,7 @@ public class MoviesWannaWatchFragment extends Fragment {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //                        更新数据的时候主键key不变
                         wannaWatchDao.update(new MoviesWannaWatch(item.getId(), item.getName(), sdf.format(date), true));
+                        adapter.notifyItemRangeChanged(layoutPosition,items.size()-layoutPosition);
                         adapter.notifyDataSetChanged();
                     }
                 }

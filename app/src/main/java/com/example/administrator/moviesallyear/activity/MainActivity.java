@@ -90,7 +90,8 @@ public class MainActivity extends ToolbarActivity {
         criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
         //        得到一个dao对象，用来操作数据库
         wannaWatchDao = MoviesAllYearApplication.getInstances().getDaoSession().getMoviesWannaWatchDao();
-        badgeImage.showTextBadge(wannaWatchDao.loadAll().size()+"");//BadgeView显示想看列表的长度
+        //BadgeView显示想看列表(watched=false)的长度
+        badgeImage.showTextBadge(wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Watched.eq(false)).list().size()+"");
         //       如果数据库有数据
         if (criticsDao.queryBuilder()
                 .orderDesc(MovieCriticsDao.Properties.CreateTime)
