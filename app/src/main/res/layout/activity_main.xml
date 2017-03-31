@@ -6,11 +6,6 @@
 
     <include layout="@layout/view_toolbar" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/color_light_grey" />
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -89,21 +84,15 @@
                             android:padding="3dp"
                             android:textSize="14sp" />
 
-                        <com.example.administrator.moviesallyear.widget.BadgeFloatingActionButton
-                            android:id="@+id/badgeButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|left"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginLeft="5dp"
-                            android:src="@mipmap/ic_launcher"
-                            app:badge_dragable="true"
-                            app:badge_horizontalMargin="0dp"
-                            app:badge_padding="6dp"
-                            app:badge_textSize="12sp"
-                            app:badge_verticalMargin="0dp"
-                            app:borderWidth="4dp"
-                            app:fabSize="normal" />
+                       <cn.bingoogolapple.badgeview.BGABadgeImageView
+                           android:id="@+id/badgeImage"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="bottom|left"
+                           android:layout_marginBottom="5dp"
+                           android:layout_marginLeft="5dp"
+                           android:src="@mipmap/movies_wanna_watch"
+                           />
                     </LinearLayout>
 
 
@@ -119,7 +108,9 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:background="@drawable/linear_bg"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="5dp"
+                            >
 
                             <TextView
                                 android:layout_width="match_parent"

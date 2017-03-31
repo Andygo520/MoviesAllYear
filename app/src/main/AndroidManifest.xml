@@ -93,7 +93,8 @@
         <activity android:name=".activity.HotMoviesActivity" />
         <activity android:name=".activity.ComingMoviesActivity" />
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.MyMovieListActivity"></activity>
+        <activity android:name=".activity.MyMovieListActivity" />
+        <activity android:name=".activity.AddMoviesWannaWatchActivity"></activity>
     </application>
 
 </manifest>

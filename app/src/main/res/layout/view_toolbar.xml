@@ -30,10 +30,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/color_white"
-        app:navigationIcon="@mipmap/back"
         android:navigationIcon="@mipmap/back"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways"/>
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:navigationIcon="@mipmap/back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_light_grey" />
 </android.support.design.widget.AppBarLayout>
