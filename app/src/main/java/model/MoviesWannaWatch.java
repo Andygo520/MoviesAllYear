@@ -2,27 +2,28 @@ package model;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by andy on 2017/3/29.
  */
 @Entity
-public class MoviesWannaSee {
+public class MoviesWannaWatch {
     @Id(autoincrement = true)
     private Long id;
     private String name;
     private String date;
     private boolean watched;
-    @Generated(hash = 451842529)
-    public MoviesWannaSee(Long id, String name, String date, boolean watched) {
+    @Keep
+    public MoviesWannaWatch(Long id, String name, String date, boolean watched) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.watched = watched;
     }
-    @Generated(hash = 2085446677)
-    public MoviesWannaSee() {
+    @Keep
+    public MoviesWannaWatch() {
     }
     public Long getId() {
         return this.id;

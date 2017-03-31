@@ -22,4 +22,9 @@
     <string name="quit_app">再按一次退出程序</string>
     <string name="check_net">请检查网络连接</string>
     <string name="no_item">未搜索到该电影名条目</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="wanna_watch">想看</string>
+    <string name="watched">已看</string>
 </resources>

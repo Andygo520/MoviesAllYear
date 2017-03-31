@@ -25,6 +25,7 @@ import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
 import com.example.administrator.moviesallyear.adapter.Top250Adapter;
 import com.example.administrator.moviesallyear.webview.WebViewActivity;
 import com.greendao.gen.MovieCriticsDao;
+import com.greendao.gen.MoviesWannaWatchDao;
 import com.tomer.fadingtextview.FadingTextView;
 
 import org.byteam.superadapter.OnItemClickListener;
@@ -35,6 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.bingoogolapple.badgeview.BGABadgeImageView;
 import model.Beauty;
 import model.MovieCritics;
 import model.Top250Movie;
@@ -46,8 +48,10 @@ import rx.schedulers.Schedulers;
 import static com.tomer.fadingtextview.FadingTextView.SECONDS;
 
 public class MainActivity extends ToolbarActivity {
-
-    private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
+    @BindView(R.id.badgeImage)
+    BGABadgeImageView badgeImage;
+    private MovieCriticsDao criticsDao;  // 用来进行影评表操作的dao对象
+    private MoviesWannaWatchDao wannaWatchDao;// 用来进行想看表操作的dao对象
     private long currentTime = 0;
     private Handler handler = new Handler();
     @BindView(R.id.toolbar)
@@ -79,14 +83,15 @@ public class MainActivity extends ToolbarActivity {
         init();
     }
 
-    private void init() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(false);//不显示箭头
+    @Override
+    protected void onResume() {
+        super.onResume();
         //        获取MovieCriticsDao对象
         criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
-
-//       如果数据库有数据
+        //        得到一个dao对象，用来操作数据库
+        wannaWatchDao = MoviesAllYearApplication.getInstances().getDaoSession().getMoviesWannaWatchDao();
+        badgeImage.showTextBadge(wannaWatchDao.loadAll().size()+"");//BadgeView显示想看列表的长度
+        //       如果数据库有数据
         if (criticsDao.queryBuilder()
                 .orderDesc(MovieCriticsDao.Properties.CreateTime)
                 .list().size() > 0) {
@@ -102,6 +107,12 @@ public class MainActivity extends ToolbarActivity {
             tvCritics.setTexts(new String[]{"添加影评"});
         }
         tvCritics.setTimeout(10, SECONDS);//10秒切换一次显示内容
+    }
+
+    private void init() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(false);//不显示箭头
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -210,7 +221,7 @@ public class MainActivity extends ToolbarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.tvCritics, R.id.llComingMovies, R.id.tvTop250, R.id.tvMore, R.id.ivBeauty})
+    @OnClick({R.id.tvCritics, R.id.llComingMovies, R.id.tvTop250, R.id.tvMore, R.id.ivBeauty, R.id.badgeImage})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tvCritics:
@@ -224,6 +235,9 @@ public class MainActivity extends ToolbarActivity {
             case R.id.tvMore:
                 break;
             case R.id.ivBeauty:
+                break;
+            case R.id.badgeImage:
+                startActivity(new Intent(MainActivity.this, MyMovieListActivity.class));
                 break;
         }
     }

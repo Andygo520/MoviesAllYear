@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:childSpacing="auto"
+    app:childSpacing="8dp"
     app:childSpacingForLastRow="align"
     app:rowSpacing="8dp">
 
@@ -10,30 +10,40 @@
         android:id="@+id/tv1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_bg"
+        android:padding="3dp"
         android:text="12" />
 
     <TextView
         android:id="@+id/tv2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_bg"
+        android:padding="3dp"
         android:text="135678" />
 
     <TextView
         android:id="@+id/tv3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_bg"
+        android:padding="3dp"
         android:text="123" />
 
     <TextView
         android:id="@+id/tv4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_bg"
+        android:padding="3dp"
         android:text="1123456" />
 
     <TextView
         android:id="@+id/tv5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_bg"
+        android:padding="3dp"
         android:text="16" />
 
 </com.nex3z.flowlayout.FlowLayout>

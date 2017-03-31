@@ -1,15 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include layout="@layout/view_toolbar" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/color_light_grey"
-        />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -84,9 +79,20 @@
                         <com.tomer.fadingtextview.FadingTextView
                             android:id="@+id/tvCritics"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
                             android:padding="3dp"
                             android:textSize="14sp" />
+
+                       <cn.bingoogolapple.badgeview.BGABadgeImageView
+                           android:id="@+id/badgeImage"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_gravity="bottom|left"
+                           android:layout_marginBottom="5dp"
+                           android:layout_marginLeft="5dp"
+                           android:src="@mipmap/movies_wanna_watch"
+                           />
                     </LinearLayout>
 
 
@@ -102,7 +108,9 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:background="@drawable/linear_bg"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:padding="5dp"
+                            >
 
                             <TextView
                                 android:layout_width="match_parent"
