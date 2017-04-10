@@ -31,8 +31,8 @@ public class MyMovieListActivity extends ToolbarActivity {
     @BindView(R.id.viewPager)
     ViewPager viewPager;
     private MoviesWannaWatchFragment wannaWatchFragment;//想看
-    private MoviesWatchedFragment watchedFragment;//已看
-    private String[] titles = {"想看", "已看"};
+    private MoviesWatchedFragment watchedFragment;//看过
+    private String[] titles = {"想看", "看过"};
 
     @Override
     protected int provideContentViewId() {

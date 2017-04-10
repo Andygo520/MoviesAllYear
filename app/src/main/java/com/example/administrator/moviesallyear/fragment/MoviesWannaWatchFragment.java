@@ -26,6 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import helper.SnackbarHelper;
 import model.MoviesWannaWatch;
 
 import static com.example.administrator.moviesallyear.R.id.date;
@@ -87,8 +88,11 @@ public class MoviesWannaWatchFragment extends Fragment {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //                        更新数据的时候主键key不变
                         wannaWatchDao.update(new MoviesWannaWatch(item.getId(), item.getName(), sdf.format(date), true));
+                        data.remove(layoutPosition);
+                        adapter.notifyItemRemoved(layoutPosition);
                         adapter.notifyItemRangeChanged(layoutPosition,items.size()-layoutPosition);
-                        adapter.notifyDataSetChanged();
+                        //使用Snackbar进行提示
+                        SnackbarHelper.ShortSnackbar(recyclerView, "条目已转移到看过", SnackbarHelper.Info).show();
                     }
                 }
             });

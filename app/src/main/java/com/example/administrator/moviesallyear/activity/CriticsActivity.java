@@ -315,9 +315,10 @@ public class CriticsActivity extends AppCompatActivity {
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
                                                             //删除position位置的数据，注意最后要通知position下面的条目位置要更新
+                                                            Log.d("position", position + "");
                                                             movieList.remove(position);
                                                             adapter.notifyItemRemoved(position);
-                                                            adapter.notifyItemRangeChanged(position, movieCriticsList.size() - position);
+                                                            adapter.notifyItemRangeChanged(position + 1, movieCriticsList.size() - position - 1);
                                                             criticsDao.deleteByKey(id);//从数据库删除记录
                                                             //使用Snackbar进行提示
                                                             SnackbarHelper.ShortSnackbar(recyclerView, "删除成功", SnackbarHelper.Info).show();

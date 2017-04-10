@@ -29,6 +29,8 @@ import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.activity.CriticsDetailActivity;
 import com.example.administrator.moviesallyear.activity.WriteCriticsActivity;
+import com.example.administrator.moviesallyear.adapter.CriticsAdapter;
+import com.example.administrator.moviesallyear.adapter.CriticsSearchedAdapter;
 import com.greendao.gen.MovieCriticsDao;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -44,8 +46,6 @@ import butterknife.OnClick;
 import helper.OnRecyclerItemClickListener;
 import helper.ShareHelper;
 import helper.SnackbarHelper;
-import com.example.administrator.moviesallyear.adapter.CriticsAdapter;
-import com.example.administrator.moviesallyear.adapter.CriticsSearchedAdapter;
 import model.MovieCritics;
 
 /**
@@ -232,7 +232,7 @@ public class CriticsFragment extends Fragment {
                     .append(critics.getName())
                     .append("\n")
                     .append("影评：")
-                    .append(critics.getCritics().replace("\\s",""))
+                    .append(critics.getCritics().replace("\\s", ""))
                     .append("\n")
                     .append(critics.getCreateTime() + "       " + critics.getStars() + "星")
                     .append("\n\n\n");
@@ -352,3 +352,4 @@ public class CriticsFragment extends Fragment {
     }
 
 }
+

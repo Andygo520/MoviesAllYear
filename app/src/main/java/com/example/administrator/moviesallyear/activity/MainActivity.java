@@ -3,6 +3,8 @@ package com.example.administrator.moviesallyear.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,6 +56,7 @@ public class MainActivity extends ToolbarActivity {
     private MoviesWannaWatchDao wannaWatchDao;// 用来进行想看表操作的dao对象
     private long currentTime = 0;
     private Handler handler = new Handler();
+    String beautyUrl;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.swipeRefreshLayout)
@@ -91,7 +94,7 @@ public class MainActivity extends ToolbarActivity {
         //        得到一个dao对象，用来操作数据库
         wannaWatchDao = MoviesAllYearApplication.getInstances().getDaoSession().getMoviesWannaWatchDao();
         //BadgeView显示想看列表(watched=false)的长度
-        badgeImage.showTextBadge(wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Watched.eq(false)).list().size()+"");
+        badgeImage.showTextBadge(wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Watched.eq(false)).list().size() + "");
         //       如果数据库有数据
         if (criticsDao.queryBuilder()
                 .orderDesc(MovieCriticsDao.Properties.CreateTime)
@@ -183,7 +186,7 @@ public class MainActivity extends ToolbarActivity {
 
                     @Override
                     public void onNext(Beauty beauty) {
-                        String beautyUrl = beauty.getResults().get(0).getUrl();
+                        beautyUrl = beauty.getResults().get(0).getUrl();
                         Glide.with(MainActivity.this)
                                 .load(beautyUrl)
                                 .into(ivBeauty);
@@ -236,10 +239,25 @@ public class MainActivity extends ToolbarActivity {
             case R.id.tvMore:
                 break;
             case R.id.ivBeauty:
+                startBeautyActivity(beautyUrl, ivBeauty);
                 break;
             case R.id.badgeImage:
                 startActivity(new Intent(MainActivity.this, MyMovieListActivity.class));
                 break;
+        }
+    }
+
+    private void startBeautyActivity(String url, View transitView) {
+        Intent intent = new Intent(MainActivity.this, BeautyActivity.class);
+        intent.putExtra("url", beautyUrl);
+        //android V4包的类,用于两个activity转场时的缩放效果实现
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                MainActivity.this, transitView, BeautyActivity.TRANSIT_PIC);
+        try {
+            ActivityCompat.startActivity(MainActivity.this, intent, optionsCompat.toBundle());
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            startActivity(intent);
         }
     }
 }
