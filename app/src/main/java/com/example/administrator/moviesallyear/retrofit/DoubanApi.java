@@ -1,4 +1,4 @@
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.retrofit;
 
 import model.Movie;
 import model.Top250Movie;

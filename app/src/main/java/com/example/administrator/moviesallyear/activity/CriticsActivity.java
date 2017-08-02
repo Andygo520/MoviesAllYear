@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +20,7 @@ import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
 import com.example.administrator.moviesallyear.R;
+import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
 import com.example.administrator.moviesallyear.adapter.CriticsAdapter;
 import com.example.administrator.moviesallyear.adapter.CriticsAdapter1;
 import com.example.administrator.moviesallyear.adapter.CriticsSearchedAdapter;
@@ -42,7 +42,7 @@ import helper.ShareHelper;
 import helper.SnackbarHelper;
 import model.MovieCritics;
 
-public class CriticsActivity extends AppCompatActivity {
+public class CriticsActivity extends ToolbarActivity {
     private String query;//用户搜索的内容
     private MovieCriticsDao criticsDao;  // 用来进行数据库操作的dao对象
     private List<MovieCritics> movieCriticsList;// 根据时间排序的recyclerView的数据源
@@ -58,9 +58,18 @@ public class CriticsActivity extends AppCompatActivity {
     FloatingActionButton fabAdd;
 
     @Override
+    protected int provideContentViewId() {
+        return R.layout.activity_critics;
+    }
+
+    @Override
+    public boolean canBack() {
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_critics);
         ButterKnife.bind(this);
         init();
     }
@@ -171,48 +180,6 @@ public class CriticsActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    //    public void onCreateOptionsMenu(Menu menu) {
-//        super.onCreateOptionsMenu(menu);
-//        menu.clear();
-//        getMenu.inflate(R.menu.menu_main, menu);
-//        MenuItem searchItem = menu.findItem(R.id.item_search);
-////        为searchItem绑定一个监听expand跟collapse状态的监听器
-//        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-//            @Override
-//            public boolean onMenuItemActionExpand(MenuItem item) {
-//                return true;// Return true to expand action view
-//            }
-//
-//            @Override
-//            public boolean onMenuItemActionCollapse(MenuItem item) {
-//                showCriticsList(movieCriticsList, CriticsActivity.this, 1);
-//                return true;// Return true to collapse action view
-//            }
-//        });
-//
-//        final SearchView searchView = (SearchView) searchItem.getActionView();
-////        ImageView button=(ImageView)searchView.findViewById(R.id.search_mag_icon);
-////        button.setImageDrawable(getResources().getDrawable(R.drawable.edit_critics));
-////        得到SearchView的输入框，将其背景设为白色
-//        View view = searchView.findViewById(android.support.v7.appcompat.R.id.search_edit_frame);
-//        view.setBackgroundColor(getResources().getColor(R.color.color_white));
-//
-//
-//        searchView.setQueryHint("输入关键字查找影评...");
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                searchCritics(newText);
-//                return false;
-//            }
-//        });
-//    }
-
     public void onResume() {
         super.onResume();
         //   从数据库查询数据(根据创建时间降序排列)
@@ -281,7 +248,7 @@ public class CriticsActivity extends AppCompatActivity {
                 @Override
                 public void onItemLongClick(View itemView, int viewType, final int position) {
                     //              长按的时候给出震动提示
-                    Vibrator vibrator = (Vibrator) CriticsActivity.this.getSystemService(Context.VIBRATOR_SERVICE);
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(1);
                     Log.d("TAGG", position + "");
                     final MovieCritics movieCritics = movieList.get(position);

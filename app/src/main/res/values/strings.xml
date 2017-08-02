@@ -28,4 +28,6 @@
     <string name="wanna_watch">想看</string>
     <string name="watched">已看</string>
     <string name="download">下载</string>
+    <string name="picture_has_save_to">图片已保存至 %s 文件夹</string>
+
 </resources>

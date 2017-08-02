@@ -17,7 +17,7 @@
  * along with Meizhi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.retrofit;
 
 /**
  * Created by drakeet on 8/9/15.

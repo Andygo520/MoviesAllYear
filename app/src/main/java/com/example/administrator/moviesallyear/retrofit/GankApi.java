@@ -17,10 +17,11 @@
  * along with Meizhi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.retrofit;
 
 import model.Beauty;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import rx.Observable;
 
 // @formatter:off
@@ -31,5 +32,5 @@ import rx.Observable;
 public interface GankApi {
 //  获取干货集中营最新的福利图
     @GET("data/福利/1/1" )
-    Observable<Beauty> getMeizhiData();
+    Observable<Beauty> getMeizhiData(@Header("Cache-Time") String time);
 }

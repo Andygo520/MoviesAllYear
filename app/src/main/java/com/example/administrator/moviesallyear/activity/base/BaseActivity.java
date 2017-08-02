@@ -22,9 +22,9 @@ package com.example.administrator.moviesallyear.activity.base;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.example.administrator.moviesallyear.DoubanApi;
-import com.example.administrator.moviesallyear.GankApi;
-import com.example.administrator.moviesallyear.QuanysFactory;
+import com.example.administrator.moviesallyear.retrofit.DoubanApi;
+import com.example.administrator.moviesallyear.retrofit.GankApi;
+import com.example.administrator.moviesallyear.retrofit.QuanysFactory;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;

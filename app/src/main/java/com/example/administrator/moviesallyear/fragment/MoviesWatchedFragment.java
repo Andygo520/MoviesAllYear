@@ -59,6 +59,13 @@ public class MoviesWatchedFragment extends Fragment {
         recyclerView.setAdapter(new WannaWatchAdapter(getActivity(), data, R.layout.item_movies_wanna_watch));
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden)
+            init();
+    }
+
     class WannaWatchAdapter extends SuperAdapter<MoviesWannaWatch> {
 
         public WannaWatchAdapter(Context context, List<MoviesWannaWatch> items, int layoutResId) {
@@ -67,7 +74,11 @@ public class MoviesWatchedFragment extends Fragment {
 
         @Override
         public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, final MoviesWannaWatch item) {
-            holder.setText(R.id.name, item.getName());
+            //          如果电影名超过16个字符则设置显示样式为“16字符+...”
+            if (item.getName().length() > 16)
+                holder.setText(R.id.name, item.getName().substring(0, 16) + "...");
+            else
+                holder.setText(R.id.name, item.getName());
             holder.setText(R.id.date, item.getDate());
             CheckBox checkBox = holder.findViewById(R.id.checkBox);
             checkBox.setVisibility(View.GONE);

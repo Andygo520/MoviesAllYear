@@ -3,21 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color_white"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:theme="@style/ToolbarTheme">
-
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-
+    <include layout="@layout/view_toolbar" />
     <!--@string/appbar_scrolling_view_behavior是系统提供的，用来使滑动控件与AppBarLayout互动-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

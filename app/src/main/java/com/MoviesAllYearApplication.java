@@ -2,10 +2,13 @@ package com;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.greendao.gen.DaoMaster;
 import com.greendao.gen.DaoSession;
 import com.squareup.leakcanary.LeakCanary;
+
+import java.io.File;
 
 /**
  * 完成GreenDao的初始化操作
@@ -54,5 +57,16 @@ public class MoviesAllYearApplication extends Application {
     }
     public SQLiteDatabase getDb() {
         return db;
+    }
+
+    @Override
+    public File getCacheDir() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File cacheDir = getExternalCacheDir();
+            if (cacheDir != null && (cacheDir.exists() || cacheDir.mkdirs())) {
+                return cacheDir;
+            }
+        }
+        return super.getCacheDir();
     }
 }

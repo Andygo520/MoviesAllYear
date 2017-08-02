@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,10 +22,10 @@ import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
 import com.bumptech.glide.Glide;
-import com.example.administrator.moviesallyear.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
 import com.example.administrator.moviesallyear.adapter.Top250Adapter;
+import com.example.administrator.moviesallyear.retrofit.QuanysFactory;
 import com.example.administrator.moviesallyear.webview.WebViewActivity;
 import com.greendao.gen.MovieCriticsDao;
 import com.greendao.gen.MoviesWannaWatchDao;
@@ -54,6 +55,8 @@ public class MainActivity extends ToolbarActivity {
     BGABadgeImageView badgeImage;
     private MovieCriticsDao criticsDao;  // 用来进行影评表操作的dao对象
     private MoviesWannaWatchDao wannaWatchDao;// 用来进行想看表操作的dao对象
+    private List<Top250Movie.SubjectsBean> movieList = new ArrayList<>();//热映电影数据源
+    private Top250Adapter adapter;
     private long currentTime = 0;
     private Handler handler = new Handler();
     String beautyUrl;
@@ -84,6 +87,29 @@ public class MainActivity extends ToolbarActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         init();
+        setUpRecyclerView();
+
+        getHotMovies();//获取热映电影
+        getBeauty();
+    }
+
+    private void setUpRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
+        //      取出Acache里的缓存数据
+//        movieList = (ArrayList<Top250Movie.SubjectsBean>) ACache.get(MainActivity.this).getAsObject("movieList");
+//        if (movieList != null) {
+//            Log.d("movieList", movieList.size() + "");
+//            adapter = new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie);
+//            recyclerView.setAdapter(adapter);
+//            adapter.setOnItemClickListener(new OnItemClickListener() {
+//                @Override
+//                public void onItemClick(View itemView, int viewType, int position) {
+//                    String url = movieList.get(position).getAlt();//取出电影网址url
+//                    String title = movieList.get(position).getTitle();//取出电影名
+//                    WebViewActivity.loadUrl(MainActivity.this, url, title);
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -114,10 +140,12 @@ public class MainActivity extends ToolbarActivity {
     }
 
     private void init() {
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(false);//不显示箭头
 
+        swipeRefreshLayout.setRefreshing(true);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -131,8 +159,7 @@ public class MainActivity extends ToolbarActivity {
                 }, 2000);
             }
         });
-        getHotMovies();//获取热映电影
-        getBeauty();
+
     }
 
     private void getHotMovies() {
@@ -152,10 +179,14 @@ public class MainActivity extends ToolbarActivity {
 
                     @Override
                     public void onNext(Top250Movie movie) {
+                        movieList = movie.getSubjects().subList(0, 5);//只显示五条记录
+                        Log.d("movieListonNext", movieList.size() + "");
+                        adapter = new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie);
+//                        adapter.notifyDataSetChanged();
+                        Log.d("movieListonNext", adapter.toString());
                         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
-                        final List<Top250Movie.SubjectsBean> movieList = movie.getSubjects().subList(0, 5);//只显示五条记录
-                        Top250Adapter adapter = new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie);
                         recyclerView.setAdapter(adapter);
+                        swipeRefreshLayout.setRefreshing(false);
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(View itemView, int viewType, int position) {
@@ -170,7 +201,7 @@ public class MainActivity extends ToolbarActivity {
     }
 
     private void getBeauty() {
-        Subscription s = QuanysFactory.getGankSingleton().getMeizhiData()
+        Subscription s = QuanysFactory.getGankSingleton().getMeizhiData("3600*24")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Beauty>() {

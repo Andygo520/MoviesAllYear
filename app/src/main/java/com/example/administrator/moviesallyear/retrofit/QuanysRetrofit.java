@@ -1,12 +1,12 @@
-package com.example.administrator.moviesallyear;
+package com.example.administrator.moviesallyear.retrofit;
 
+import com.MoviesAllYearApplication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -31,14 +31,13 @@ public class QuanysRetrofit {
 
 
     QuanysRetrofit() {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        if (QuanysFactory.isDebug) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            httpClient.addInterceptor(logging);
-        }
-        httpClient.connectTimeout(12, TimeUnit.SECONDS);
-        OkHttpClient client = httpClient.build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new CacheInterceptor())//缓存拦截器
+                .cache(new CacheProvider(MoviesAllYearApplication.getInstances()).provideCache())//缓存空间提供器
+                .connectTimeout(8, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .build();
 
         Retrofit.Builder builder = new Retrofit.Builder();
         Retrofit.Builder builder1 = new Retrofit.Builder();

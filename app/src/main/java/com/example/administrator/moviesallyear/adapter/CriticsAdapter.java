@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.MoviesAllYearApplication;
-import com.example.administrator.moviesallyear.QuanysFactory;
+import com.example.administrator.moviesallyear.retrofit.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
 import com.greendao.gen.MovieCriticsDao;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;

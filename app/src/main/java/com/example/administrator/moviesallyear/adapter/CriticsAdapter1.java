@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.administrator.moviesallyear.QuanysFactory;
+import com.example.administrator.moviesallyear.retrofit.QuanysFactory;
 import com.example.administrator.moviesallyear.R;
 import com.example.administrator.moviesallyear.utils.CheckNetwork;
 import com.example.administrator.moviesallyear.webview.WebViewActivity;
@@ -126,7 +126,6 @@ public class CriticsAdapter1 extends SuperAdapter<MovieCritics> {
         if (this.mCompositeSubscription == null) {
             this.mCompositeSubscription = new CompositeSubscription();
         }
-
         this.mCompositeSubscription.add(s);
     }
 

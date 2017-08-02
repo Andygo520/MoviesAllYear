@@ -9,11 +9,11 @@
         android:id="@+id/et_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@null"
+        android:gravity="start"
         android:hint="请输入电影名..."
+        android:padding="5dp"
         android:textColor="@color/color_black"
         android:textColorHint="@color/color_dark_grey"
-        android:textSize="18sp"
-        android:gravity="start"
-        android:padding="5dp"
-        />
+        android:textSize="18sp" />
 </LinearLayout>

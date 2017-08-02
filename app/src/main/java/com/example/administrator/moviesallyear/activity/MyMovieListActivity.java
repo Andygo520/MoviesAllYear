@@ -54,6 +54,22 @@ public class MyMovieListActivity extends ToolbarActivity {
             watchedFragment = new MoviesWatchedFragment();
         viewPager.setAdapter(new MyAdapter(getSupportFragmentManager()));
         tab.setupWithViewPager(viewPager);
+        tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
@@ -66,6 +82,7 @@ public class MyMovieListActivity extends ToolbarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.item_add){
             startActivity(new Intent(MyMovieListActivity.this,AddMoviesWannaWatchActivity.class));
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

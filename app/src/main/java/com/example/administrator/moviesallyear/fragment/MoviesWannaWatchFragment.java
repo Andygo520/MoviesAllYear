@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,6 @@ import butterknife.ButterKnife;
 import helper.SnackbarHelper;
 import model.MoviesWannaWatch;
 
-import static com.example.administrator.moviesallyear.R.id.date;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -45,7 +44,6 @@ public class MoviesWannaWatchFragment extends Fragment {
     public MoviesWannaWatchFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,21 +61,26 @@ public class MoviesWannaWatchFragment extends Fragment {
         wannaWatchDao = MoviesAllYearApplication.getInstances().getDaoSession().getMoviesWannaWatchDao();
         data = wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Watched.eq(false)).list();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter=new WannaWatchAdapter(getActivity(), data, R.layout.item_movies_wanna_watch);
+        adapter = new WannaWatchAdapter(getActivity(), data, R.layout.item_movies_wanna_watch);
         recyclerView.setAdapter(adapter);
     }
 
     class WannaWatchAdapter extends SuperAdapter<MoviesWannaWatch> {
 
-        private List<MoviesWannaWatch> items=new ArrayList<>();
+        private List<MoviesWannaWatch> items = new ArrayList<>();
+
         public WannaWatchAdapter(Context context, List<MoviesWannaWatch> items, int layoutResId) {
             super(context, items, layoutResId);
         }
 
         @Override
         public void onBind(SuperViewHolder holder, int viewType, final int layoutPosition, final MoviesWannaWatch item) {
-            holder.setText(R.id.name, item.getName());
-            holder.setText(date, item.getDate());
+//          如果电影名超过16个字符则设置显示样式为“16字符+...”
+            if (item.getName().length() > 16)
+                holder.setText(R.id.name, item.getName().substring(0, 16) + "...");
+            else
+                holder.setText(R.id.name, item.getName());
+            holder.setText(R.id.date, item.getDate());
             CheckBox checkBox = holder.findViewById(R.id.checkBox);
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -86,12 +89,14 @@ public class MoviesWannaWatchFragment extends Fragment {
                         long time = System.currentTimeMillis();
                         Date date = new Date(time);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                        更新数据的时候主键key不变
-                        wannaWatchDao.update(new MoviesWannaWatch(item.getId(), item.getName(), sdf.format(date), true));
+
+                        Log.d("layoutPosition", layoutPosition + "");
                         data.remove(layoutPosition);
                         adapter.notifyItemRemoved(layoutPosition);
-                        adapter.notifyItemRangeChanged(layoutPosition,items.size()-layoutPosition);
-                        //使用Snackbar进行提示
+                        adapter.notifyItemRangeChanged(layoutPosition, data.size() - layoutPosition);
+//                        更新数据的时候主键key不变
+                        wannaWatchDao.update(new MoviesWannaWatch(item.getId(), item.getName(), sdf.format(date), true));
+//                     使用Snackbar进行提示
                         SnackbarHelper.ShortSnackbar(recyclerView, "条目已转移到看过", SnackbarHelper.Info).show();
                     }
                 }

@@ -85,7 +85,9 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.CriticsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/ToolbarTheme"
+            />
         <activity
             android:name=".webview.WebViewActivity"
             android:screenOrientation="portrait" />
