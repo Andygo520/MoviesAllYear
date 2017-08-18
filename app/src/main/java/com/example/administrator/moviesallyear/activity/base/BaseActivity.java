@@ -20,54 +20,46 @@
 package com.example.administrator.moviesallyear.activity.base;
 
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-
-import com.example.administrator.moviesallyear.retrofit.DoubanApi;
-import com.example.administrator.moviesallyear.retrofit.GankApi;
-import com.example.administrator.moviesallyear.retrofit.QuanysFactory;
-
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
 
 
 public class BaseActivity extends AppCompatActivity {
-
-    public static final GankApi sGankIO = QuanysFactory.getGankSingleton();
-    public static final DoubanApi sDoubanIO= QuanysFactory.getDoubanSingleton();
-
-    private CompositeSubscription mCompositeSubscription;
-
-
-    public CompositeSubscription getCompositeSubscription() {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-
-        return this.mCompositeSubscription;
-    }
-
-
-    public void addSubscription(Subscription s) {
-        if (this.mCompositeSubscription == null) {
-            this.mCompositeSubscription = new CompositeSubscription();
-        }
-
-        this.mCompositeSubscription.add(s);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (this.mCompositeSubscription != null) {
-            this.mCompositeSubscription.unsubscribe();
-        }
-    }
+//
+//    public static final GankApi sGankIO = QuanysFactory.getGankSingleton();
+//    public static final DoubanApi sDoubanIO= QuanysFactory.getDoubanSingleton();
+//
+//    private CompositeSubscription mCompositeSubscription;
+//
+//
+//    public CompositeSubscription getCompositeSubscription() {
+//        if (this.mCompositeSubscription == null) {
+//            this.mCompositeSubscription = new CompositeSubscription();
+//        }
+//
+//        return this.mCompositeSubscription;
+//    }
+//
+//
+//    public void addSubscription(Subscription s) {
+//        if (this.mCompositeSubscription == null) {
+//            this.mCompositeSubscription = new CompositeSubscription();
+//        }
+//
+//        this.mCompositeSubscription.add(s);
+//    }
+//
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        if (this.mCompositeSubscription != null) {
+//            this.mCompositeSubscription.unsubscribe();
+//        }
+//    }
 }

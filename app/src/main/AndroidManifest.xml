@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.administrator.moviesallyear">
 
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -23,6 +24,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".activity.WelcomeActivity"
             android:screenOrientation="portrait"
@@ -79,19 +81,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.Top250Activity"
-            android:label="@string/title_activity_classic250"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".activity.CriticsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ToolbarTheme"
-            />
+        <!--<activity-->
+            <!--android:name=".activity.Top250Activity"-->
+            <!--android:label="@string/title_activity_classic250"-->
+            <!--android:theme="@style/AppTheme" />-->
+        <!--<activity-->
+            <!--android:name=".activity.CriticsActivity"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:theme="@style/ToolbarTheme" />-->
         <activity
             android:name=".webview.WebViewActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.BeautyActivity" />
+        <!--<activity android:name=".activity.BeautyActivity" />-->
         <activity android:name=".activity.HotMoviesActivity" />
         <activity android:name=".activity.ComingMoviesActivity" />
         <activity android:name=".activity.SearchActivity" />

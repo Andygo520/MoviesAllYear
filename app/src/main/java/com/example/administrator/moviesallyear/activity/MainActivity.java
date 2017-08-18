@@ -1,294 +1,153 @@
 package com.example.administrator.moviesallyear.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.MoviesAllYearApplication;
-import com.bumptech.glide.Glide;
 import com.example.administrator.moviesallyear.R;
-import com.example.administrator.moviesallyear.activity.base.ToolbarActivity;
-import com.example.administrator.moviesallyear.adapter.Top250Adapter;
-import com.example.administrator.moviesallyear.retrofit.QuanysFactory;
-import com.example.administrator.moviesallyear.webview.WebViewActivity;
-import com.greendao.gen.MovieCriticsDao;
-import com.greendao.gen.MoviesWannaWatchDao;
-import com.tomer.fadingtextview.FadingTextView;
-
-import org.byteam.superadapter.OnItemClickListener;
+import com.example.administrator.moviesallyear.mainactivity.Category;
+import com.example.administrator.moviesallyear.mainactivity.CategoryViewBinder;
+import com.example.administrator.moviesallyear.mainactivity.Douban250;
+import com.example.administrator.moviesallyear.mainactivity.Douban250ViewBinder;
+import com.example.administrator.moviesallyear.mainactivity.HorizontalMoviesViewBinder;
+import com.example.administrator.moviesallyear.mainactivity.MoviesInComingViewBinder;
+import com.example.administrator.moviesallyear.retrofit.Api;
+import com.example.administrator.moviesallyear.retrofit.BaseModel;
+import com.example.administrator.moviesallyear.retrofit.RxHelper;
+import com.example.administrator.moviesallyear.retrofit.RxSubscriber;
+import com.example.administrator.moviesallyear.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import cn.bingoogolapple.badgeview.BGABadgeImageView;
-import model.Beauty;
-import model.MovieCritics;
-import model.Top250Movie;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import me.drakeet.multitype.Items;
+import me.drakeet.multitype.MultiTypeAdapter;
+import model.HorizontalMovieList;
+import model.MoviesInTheater;
+import rx.functions.Action1;
 
-import static com.tomer.fadingtextview.FadingTextView.SECONDS;
-
-public class MainActivity extends ToolbarActivity {
-    @BindView(R.id.badgeImage)
-    BGABadgeImageView badgeImage;
-    private MovieCriticsDao criticsDao;  // 用来进行影评表操作的dao对象
-    private MoviesWannaWatchDao wannaWatchDao;// 用来进行想看表操作的dao对象
-    private List<Top250Movie.SubjectsBean> movieList = new ArrayList<>();//热映电影数据源
-    private Top250Adapter adapter;
-    private long currentTime = 0;
-    private Handler handler = new Handler();
-    String beautyUrl;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.swipeRefreshLayout)
-    SwipeRefreshLayout swipeRefreshLayout;
+public class MainActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.tvCritics)
-    FadingTextView tvCritics;
-    @BindView(R.id.llComingMovies)
-    LinearLayout llComingMovies;
-    @BindView(R.id.tvTop250)
-    TextView tvTop250;
-    @BindView(R.id.tvMore)
-    TextView tvMore;
-    @BindView(R.id.ivBeauty)
-    ImageView ivBeauty;
-
-    @Override
-    protected int provideContentViewId() {
-        return R.layout.activity_main;
-    }
+    private MultiTypeAdapter adapter;
+    private Items items;
+    private static final int Span = 3;//网格的列数
+    private int hotMovieNum = 0;
+    private int comingSoonNum = 0;
+    private List<MoviesInTheater> hotMovieList = new ArrayList<>();
+    private List<MoviesInTheater> comingSoonMovieList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        init();
-        setUpRecyclerView();
 
-        getHotMovies();//获取热映电影
-        getBeauty();
-    }
+        adapter = new MultiTypeAdapter();
+        items = new Items();
+        adapter.register(Category.class, new CategoryViewBinder());
+        adapter.register(HorizontalMovieList.class, new HorizontalMoviesViewBinder());
+        adapter.register(MoviesInTheater.class, new MoviesInComingViewBinder());
+        adapter.register(Douban250.class, new Douban250ViewBinder());
 
-    private void setUpRecyclerView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
-        //      取出Acache里的缓存数据
-//        movieList = (ArrayList<Top250Movie.SubjectsBean>) ACache.get(MainActivity.this).getAsObject("movieList");
-//        if (movieList != null) {
-//            Log.d("movieList", movieList.size() + "");
-//            adapter = new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie);
-//            recyclerView.setAdapter(adapter);
-//            adapter.setOnItemClickListener(new OnItemClickListener() {
-//                @Override
-//                public void onItemClick(View itemView, int viewType, int position) {
-//                    String url = movieList.get(position).getAlt();//取出电影网址url
-//                    String title = movieList.get(position).getTitle();//取出电影名
-//                    WebViewActivity.loadUrl(MainActivity.this, url, title);
-//                }
-//            });
-//        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //        获取MovieCriticsDao对象
-        criticsDao = MoviesAllYearApplication.getInstances().getDaoSession().getMovieCriticsDao();
-        //        得到一个dao对象，用来操作数据库
-        wannaWatchDao = MoviesAllYearApplication.getInstances().getDaoSession().getMoviesWannaWatchDao();
-        //BadgeView显示想看列表(watched=false)的长度
-        badgeImage.showTextBadge(wannaWatchDao.queryBuilder().where(MoviesWannaWatchDao.Properties.Watched.eq(false)).list().size() + "");
-        //       如果数据库有数据
-        if (criticsDao.queryBuilder()
-                .orderDesc(MovieCriticsDao.Properties.CreateTime)
-                .list().size() > 0) {
-            List<MovieCritics> criticsList = criticsDao.queryBuilder()
-                    .orderDesc(MovieCriticsDao.Properties.CreateTime)
-                    .list();
-            List<String> texts = new ArrayList<>();//存放FadingTextView显示的内容
-            for (MovieCritics movieCritics : criticsList) {
-                texts.add(movieCritics.getName() + "\n  " + movieCritics.getCritics());
-            }
-            tvCritics.setTexts(texts.toArray(new String[criticsList.size()]));
-        } else {
-            tvCritics.setTexts(new String[]{"添加影评"});
-        }
-        tvCritics.setTimeout(10, SECONDS);//10秒切换一次显示内容
-    }
-
-    private void init() {
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(false);//不显示箭头
-
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        GridLayoutManager layoutManager = new GridLayoutManager(this, Span);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
-            public void onRefresh() {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        getHotMovies();//获取热映电影
-                        getBeauty();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 2000);
+            public int getSpanSize(int position) {
+//          如果对应位置的条目是Category或MovieCritics、Douban250，那么他们占据3列
+                Object item = items.get(position);
+                return (item instanceof Category
+                        || item instanceof HorizontalMovieList
+                        || item instanceof Douban250) ? Span : 1;
             }
         });
-
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        getHotMovies();
     }
 
-    private void getHotMovies() {
-        Subscription s = QuanysFactory.getDoubanSingleton().getHotMovie()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Top250Movie>() {
+    public void getHotMovies() {
+        Api.getDefault().getHotMovie()
+                .doOnNext(new Action1<BaseModel<ArrayList<MoviesInTheater>>>() {
                     @Override
-                    public void onCompleted() {
-
+                    public void call(BaseModel<ArrayList<MoviesInTheater>> result) {
+                        hotMovieNum = result.getTotal();
+                    }
+                })
+                .compose(RxHelper.<ArrayList<MoviesInTheater>>handleResult())
+                .subscribe(new RxSubscriber<ArrayList<MoviesInTheater>>(this) {
+                    @Override
+                    protected void _onNext(ArrayList<MoviesInTheater> hotMovies) {
+                        hotMovieList = hotMovies.subList(0, 7);
+//                      完成热映电影的接口调用后，再调用即将上映影片接口
+                        getComingSoonMovies();
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Top250Movie movie) {
-                        movieList = movie.getSubjects().subList(0, 5);//只显示五条记录
-                        Log.d("movieListonNext", movieList.size() + "");
-                        adapter = new Top250Adapter(MainActivity.this, movieList, R.layout.item_movie);
-//                        adapter.notifyDataSetChanged();
-                        Log.d("movieListonNext", adapter.toString());
-                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
-                        recyclerView.setAdapter(adapter);
-                        swipeRefreshLayout.setRefreshing(false);
-                        adapter.setOnItemClickListener(new OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View itemView, int viewType, int position) {
-                                String url = movieList.get(position).getAlt();//取出电影网址url
-                                String title = movieList.get(position).getTitle();//取出电影名
-                                WebViewActivity.loadUrl(MainActivity.this, url, title);
-                            }
-                        });
+                    protected void _onError(String message) {
+                        ToastUtil.showToast(message);
                     }
                 });
-        addSubscription(s);
+
     }
 
-    private void getBeauty() {
-        Subscription s = QuanysFactory.getGankSingleton().getMeizhiData("3600*24")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Beauty>() {
+    public void getComingSoonMovies() {
+        Api.getDefault().getComingSoonMovie()
+                .doOnNext(new Action1<BaseModel<ArrayList<MoviesInTheater>>>() {
                     @Override
-                    public void onCompleted() {
-
+                    public void call(BaseModel<ArrayList<MoviesInTheater>> result) {
+                        comingSoonNum = result.getTotal();
+                    }
+                })
+                .compose(RxHelper.<ArrayList<MoviesInTheater>>handleResult())
+                .subscribe(new RxSubscriber<ArrayList<MoviesInTheater>>(this) {
+                    @Override
+                    protected void _onNext(ArrayList<MoviesInTheater> comingSoonMovies) {
+                        comingSoonMovieList = comingSoonMovies.subList(0, 6);
+                        getDouban250();
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-
+                    protected void _onError(String message) {
+                        ToastUtil.showToast(message);
                     }
 
                     @Override
-                    public void onNext(Beauty beauty) {
-                        beautyUrl = beauty.getResults().get(0).getUrl();
-                        Glide.with(MainActivity.this)
-                                .load(beautyUrl)
-                                .into(ivBeauty);
+                    protected boolean showDialog() {
+                        return false;
+                    }
+                })
+        ;
+    }
+
+    public void getDouban250() {
+        Api.getDefault().getMovieTop250()
+                .compose(RxHelper.<ArrayList<Douban250>>handleResult())
+                .subscribe(new RxSubscriber<ArrayList<Douban250>>(this) {
+                    @Override
+                    protected void _onNext(ArrayList<Douban250> douban250List) {
+                        items.add(new Category(getString(R.string.hot_movies), getString(R.string.total) + hotMovieNum));
+                        items.add(new HorizontalMovieList(hotMovieList));
+                        items.add(new Category(getString(R.string.coming_soon), getString(R.string.total) + comingSoonNum));
+                        items.addAll(comingSoonMovieList);
+                        items.add(new Category(getString(R.string.douban250), getString(R.string.more_movies)));
+                        items.addAll(douban250List.subList(0, 5));
+                        adapter.setItems(items);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    protected void _onError(String message) {
+                        ToastUtil.showToast(message);
+                    }
+
+                    @Override
+                    protected boolean showDialog() {
+                        return false;
                     }
                 });
-        addSubscription(s);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (System.currentTimeMillis() - currentTime < 2000) {
-                System.exit(0);
-            } else {
-                Toast.makeText(MainActivity.this, R.string.quit_app, Toast.LENGTH_SHORT).show();
-                currentTime = System.currentTimeMillis();
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item_search:
-                startActivity(new Intent(MainActivity.this, SearchActivity.class));
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @OnClick({R.id.tvCritics, R.id.llComingMovies, R.id.tvTop250, R.id.tvMore, R.id.ivBeauty, R.id.badgeImage})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tvCritics:
-                startActivity(new Intent(MainActivity.this, CriticsActivity.class));
-                break;
-            case R.id.llComingMovies:
-                break;
-            case R.id.tvTop250:
-                startActivity(new Intent(MainActivity.this, Top250Activity.class));
-                break;
-            case R.id.tvMore:
-                break;
-            case R.id.ivBeauty:
-                startBeautyActivity(beautyUrl, ivBeauty);
-                break;
-            case R.id.badgeImage:
-                startActivity(new Intent(MainActivity.this, MyMovieListActivity.class));
-                break;
-        }
-    }
-
-    private void startBeautyActivity(String url, View transitView) {
-        Intent intent = new Intent(MainActivity.this, BeautyActivity.class);
-        intent.putExtra("url", beautyUrl);
-        //android V4包的类,用于两个activity转场时的缩放效果实现
-        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                MainActivity.this, transitView, BeautyActivity.TRANSIT_PIC);
-        try {
-            ActivityCompat.startActivity(MainActivity.this, intent, optionsCompat.toBundle());
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            startActivity(intent);
-        }
     }
 }

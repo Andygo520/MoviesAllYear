@@ -29,5 +29,10 @@
     <string name="watched">已看</string>
     <string name="download">下载</string>
     <string name="picture_has_save_to">图片已保存至 %s 文件夹</string>
+    <string name="hot_movies">影院热映</string>
+    <string name="total">全部</string>
+    <string name="coming_soon">即将上映</string>
+    <string name="casts">主演：</string>
+    <string name="douban250">豆瓣250</string>
 
 </resources>

@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Administrator on 2017/3/16.
  */
 
-public class InTheaterMovie {
+public class MoviesInTheater {
     /**
      * max : 10
      * average : 7.8
